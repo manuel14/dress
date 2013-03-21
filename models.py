@@ -148,6 +148,39 @@ class Prenda:
         self.condicional = False
         self.pagada = False
 
+    def setNombre(self, nombre):
+        self.nombre = nombre
+        pub.sendMessaje("CAMBIO PRENDA", self)
+
+    def setTalle(self, talle):
+        self.talle = talle
+        pub.sendMessaje("CAMBIO PRENDA", self)
+
+    def setCosto(self, costo):
+        self.costo = costo
+        pub.sendMessaje("CAMBIO PRENDA", self)
+    
+    def setPrecio(self, precio):
+        self.precio = precio
+        pub.sendMessaje("CAMBIO PRENDA", self)
+
+    def setDescripcion(self, descripcion):
+        self.descripcion = descripcion
+        pub.sendMessaje("CAMBIO PRENDA", self)
+
+    def setVendida(self, vendida):
+        self.vendida = vendida
+        pub.sendMessaje("CAMBIO PRENDA", self)
+
+    def setCondicional(self, condicional):
+        self.condicional = condicional
+        pub.sendMessaje("CAMBIO PRENDA", self)
+
+    def setPagada(self, pagada):
+        self.pagada = pagada
+        pub.sendMessaje("CAMBIO PRENDA", self)
+
+
 
 class ListaClientes:
 
