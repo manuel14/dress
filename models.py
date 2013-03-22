@@ -3,158 +3,196 @@ import string
 import wx
 from wx.lib.pubsub import Publisher as pub
 
-class Compra:
+class Movimiento:
     """
+    Un movimiento representa alguna transaccion de productos
+    y/o dinero. Sirve como base para compras, entregas, etc..
     """
 
-    def __init__(self, prenda, cliente, precio, nombrePrenda):
-        self.fecha = datetime.date.today()
+    def __init__(self, cliente, fecha=datetime.date.today()):
+
+        self.fecha = fecha
+	self.cliente = cliente
+
+
+    def __cmp__(self, otroMov):
+
+        if (self.fecha > otroMov.fecha):
+	    return 1
+        elif (self.fecha < otroMov.fecha):
+	    return -1
+
+
+
+class Pago(Movimiento):
+    """
+    Un pago es una entrega de dinero en cualquier concepto. Ya sea
+    en una Compra, para saldar un Condicional, o saldar una deuda.
+    """
+
+    def __init__(self, monto, cliente):
+
+        Movimiento.__init__(self, cliente)
+        self.monto = monto
+
+
+
+class Compra(Movimiento):
+    """
+    Una compra representa un movimiento en el cual se realiza el
+    pago completo de una prenda. Y se retira el producto.
+    Se asume que en una Compra se debe entregar algo de dinero,
+    de otro modo seria un Condicional en vez de un a Compra.
+    """
+
+    def __init__(self, monto,  prenda, cliente):
+
+        Movimiento.__init__(self, cliente)
         self.prenda = prenda
-        self.nombrePrenda = nombrePrenda
-        self.cliente = cliente
-        self.precio = precio
+	self.pago = Pago(monto); # Sera que se pueden hacer varios pagos?
 
 
-class Condicional:
+
+class Condicional(Movimiento):
     """
+    Un concepto villangelense, donde una persona puede llevar una 
+    prenda y decidir si lo va a comprar luego. Sino devuelve la
+    prenda.
     """
 
     def __init__(self, prenda, cliente):
-        self.fecha = datetime.date.today()
-        self.prenda = prenda
-        self.cliente = cliente
-
-
-class Movimiento:
-    """
-    """
-
-    def __init__(self, fecha, movimiento, prenda, monto):
-        self.fecha = fecha
-        self.movimiento = movimiento
-        self.monto = monto
+        
+	Movimiento.__init__(self, cliente)
         self.prenda = prenda
 
-    def __cmp__(self, otroMov):
-        resul = 0
-
-        if (self.fecha > otroMov.fecha):
-            resul = 1
-        elif (self.fecha < otroMov.fecha):
-            resul = (-1)
-
-        return resul
-
-
-class Entrega:
-    """
-    """
-
-    def __init__(self, monto):
-        self.monto = monto
-        self.fecha = datetime.date.today()
 
 
 class Cliente:
     """
+    Representa a un Cliente, y contiene su informacion.
     """
 
     def __init__(self, dni, nombre, telefono, email):
-        self.__dni = dni
-        self.nombre = nombre
-        self.telefono = telefono
-        self.email = email
-        self.fecha_ultima_entrega = ""
-        self.compras = []
-        self.entregas = []
-        self.condicionales = []
+
+        self._dni = dni
+        self._nombre = nombre
+        self._telefono = telefono
+        self._email = email
+
+        self._compras = []
+        self._pagos = []
+        self._condicionales = []
+
 
     def setNombre(self, nombre):
-        self.nombre = nombre
-        pub.sendMessaje("CAMBIO CLIENTE", self)
+
+        self._nombre = nombre
+        pub.sendMessaje("CAMBIO_CLIENTE", self)
+
 
     def setTelefono(self, telefono):
-        self.telefono = telefono
-        pub.sendMessaje("CAMBIO CLIENTE", self)
+
+        self._telefono = telefono
+        pub.sendMessaje("CAMBIO_CLIENTE", self)
+
 
     def setEmail(self, email):
-        self.email = email
-        pub.sendMessaje("CAMBIO CLIENTE", self)
+
+        self._email = email
+        pub.sendMessaje("CAMBIO_CLIENTE", self)
+
    
-    def setFechaUltimaEntrega(self, fecha):
-        self.fecha_ultima_entrega = fecha
-        pub.sendMessaje("CAMBIO CLIENTE", self)
-
-    def setEmail(self, nombre):
-        self.nombre = nombre
-        pub.sendMessaje("CAMBIO CLIENTE", self)
-
     def addCompra(self, compra):
-        self.compras.append(compra)
-        pub.sendMessaje("COMPRA AGREGADA", self)
 
-    def addEntrega(self, entrega):
-        self.entregas.append(entrega)
-        pub.sendMessaje("ENTREGA AGREGADA", self)
+        self._compras.append(compra)
+        pub.sendMessaje("COMPRA_AGREGADA", self)
+
+
+    def addPagos(self, pago):
+
+        self._pagos.append(entrega)
+        pub.sendMessaje("ENTREGA_AGREGADA", self)
+
 
     def deleteCompra(self, compra):
-        self.compras.remove(compra)
-        pub.sendMessaje("COMPRA ELIMINADA", self)
+
+        self._compras.remove(compra)
+        pub.sendMessaje("COMPRA_ELIMINADA", self)
+
     
-    def deleteEntrega(self, entrega):
-        self.entregas.remove(entrega)
-        pub.sendMessaje("ENTREGA ELIMINADA", self)
+    def deletePagos(self, entrega):
+
+        self._pagos.remove(entrega)
+        pub.sendMessaje("ENTREGA_ELIMINADA", self)
+
 
     def addCondicional(self, condicional):
-        self.condicionales.append(condicional)
-        pub.sendMessaje("CONDICIONAL AGREGADO", self)
+
+        self._condicionales.append(condicional)
+        pub.sendMessaje("CONDICIONAL_AGREGADO", self)
+
 
     def deleteCondicionales(self):
-        self.condicionales = []
-        pub.sendMessaje("CONDICIONALES ELIMINADOS")
+
+        self._condicionales = []
+        pub.sendMessaje("CONDICIONALES_ELIMINADOS")
+
+
+    def getDni(self):
+
+        return self._dni
+
 
     def getMovimietos(self):
-        movimientos = []
 
-        for compra in self.compras:
-            movim = Movimiento(compra.fecha, "Compra", compra.prenda + compra.nombrePrenda, compra.precio)
-            movimientos.append(movim)
-
-        for entrega in self.entregas:
-            movim = Movimiento(entrega.fecha, "Entrega", "-", entrega.monto)
-            movimientos.append(movim)
-
-
-        for condicional in self.condicionales:
-            movim = Movimiento(condicional.fecha, "Condicional", condicional.prenda + compra.nombrePrenda, 0)
-            movimientos.append(movim)
-
+        movimientos = self._compras + self._pagos + self._condicionales
         movimientos.sort()
 
         return movimientos
 
+
     def getSaldo(self):
+
         deuda = 0
         credito = 0
 
-        for compra in self.compras:
-            deuda = deuda + compra.precio
+        for compra in self._compras:
+            deuda += compra.prenda.precio
 
-        for entrega in self.entregas:
-            credito = credito + entrega.monto
+        for pagos in self._pagos:
+            credito += pago.monto
 
-        saldo = credito - deuda
+        return (credito - deuda)
 
-        return saldo
+
+    def getUltimoPago(self):
+
+        return max(self._pagos, key= lambda x:x.fecha)
+
     
-    def getEstadoCliente(self):
-        # no se como hacer la comparacion entre fechas, la idea es que si getSaldo = 0
-        # o fecha_ultima_entrega es menor a un mes,  que sea "al dia", si getSaldo > 0
-        # y fecha_ultima_entrega es mayor a un mes pero menor a dos meses sea "tardio"
-        # y si getSaldo > 0 fecha_ultima_entrega es mayor a dos meses sea "moroso"
+    def getEstado(self):
 
-    def getDni(self):
-        return self.__dni
+        # La cantidad de dias en la cual se debe realizar un pago
+    	plazo = datetime.timedelta(days=30)
+
+	# Cantidad de dias desde que hizo el ultimo pago hasta hoy
+	delta = (datetime.date.today() - self.getUltimoPago().fecha).days
+
+	en_plazo = delta < 30
+
+	if self.getSaldo() == 0 or en_plazo:
+	    return "al dia"
+	else:
+	    
+	    if delta > 60:
+	        return "moroso"
+	    else:
+	        return "tardio"
+
+
+
+# Refactorizado hasta aqui.
+# -------------------------
 
 
 class Prenda:
