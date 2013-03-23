@@ -41,15 +41,12 @@ class Compra(Movimiento):
     """
     Una compra representa un movimiento en el cual se realiza el
     pago completo de una prenda. Y se retira el producto.
-    Se asume que en una Compra se debe entregar algo de dinero,
-    de otro modo seria un Condicional en vez de un a Compra.
     """
 
     def __init__(self, monto,  prenda, cliente):
 
         Movimiento.__init__(self, cliente)
         self.prenda = prenda
-	self.pago = Pago(monto); # Sera que se pueden hacer varios pagos?
 
 
 
