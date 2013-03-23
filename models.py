@@ -181,7 +181,7 @@ class Cliente:
 	en_plazo = delta < 30
 
 	if self.getSaldo() == 0 or en_plazo:
-	    return "al dia"
+	    return "al_dia"
 	else:
 	    
 	    if delta > 60:
@@ -191,53 +191,78 @@ class Cliente:
 
 
 
-# Refactorizado hasta aqui.
-# -------------------------
-
-
 class Prenda:
     """
+    Representa una prenda de ropa. El producto del negocio.
     """
 
-    def __init___(self, codigo, nombre, talle, costo, precio, descripcion):
-        self.__codigo = codigo
+    _index = 0 # Lleva la cuenta de los codigos de las prendas
+
+    def __init___(self, codigo, nombre, talle, costo, precio):
+
+        self._codigo = codigo
+	Prenda._index += 1
+
         self.nombre = nombre
-        self.talle = talle
+        self.talle = talle # Talle? esto no iba en el nombre?
         self.costo = costo
         self.precio = precio
-        self. descripcion = descripcion
-        self.vendida = False
-        self.condicional = False
+        self.descripcion = descripcion
+
+	self._vendida = False
+	self._condicional = False
+
 
     def setNombre(self, nombre):
+
         self.nombre = nombre
-        pub.sendMessaje("CAMBIO PRENDA", self)
+        pub.sendMessaje("CAMBIO_PRENDA", self)
+
 
     def setTalle(self, talle):
+
         self.talle = talle
-        pub.sendMessaje("CAMBIO PRENDA", self)
+        pub.sendMessaje("CAMBIO_PRENDA", self)
+
 
     def setCosto(self, costo):
+
         self.costo = costo
-        pub.sendMessaje("CAMBIO PRENDA", self)
+        pub.sendMessaje("CAMBIO_PRENDA", self)
+
     
     def setPrecio(self, precio):
+    
         self.precio = precio
-        pub.sendMessaje("CAMBIO PRENDA", self)
+        pub.sendMessaje("CAMBIO_PRENDA", self)
+
 
     def setDescripcion(self, descripcion):
+
         self.descripcion = descripcion
-        pub.sendMessaje("CAMBIO PRENDA", self)
+        pub.sendMessaje("CAMBIO_PRENDA", self)
+
 
     def setVendida(self, vendida):
+
+        if self.condicional:
+	    self.condicional = False
+
         self.vendida = vendida
-        pub.sendMessaje("CAMBIO PRENDA", self)
+        pub.sendMessaje("CAMBIO_PRENDA", self)
+
 
     def setCondicional(self, condicional):
-        self.condicional = condicional
-        pub.sendMessaje("CAMBIO PRENDA", self)
 
-    def getEstadoPrenda(self):
+        if self.vendida:
+	    self.vendida = False
+    
+        self.condicional = condicional
+        pub.sendMessaje("CAMBIO_PRENDA", self)
+	
+
+    def getEstado(self):
+
         estado = "disponible"
         
         if self.vendida:
@@ -248,133 +273,116 @@ class Prenda:
         return estado
 
     def getCodigo(self):
-        return self.__codigo
+
+        return self._codigo
+
+
 
 class ListaClientes:
-
+    """
+    Coleccion de instancias de Cliente
+    """
 
     def __init__(self):
-        self.__clientes = []
+
+        self._clientes = []
+
 
     def addCliente(self, cliente):
-        self.__clientes.append(cliente)
-        pub.sendMessaje("CLIENTE AGREGADO", self)
+
+        self._clientes.append(cliente)
+        pub.sendMessaje("CLIENTE_AGREGADO", self)
+
 
     def deleteCliente(self, cliente):
-        self.__clientes.remove(cliente)
-        pub.sendMessaje("CLIENTE ELIMINADO", self)
+
+        self._clientes.remove(cliente)
+        pub.sendMessaje("CLIENTE_ELIMINADO", self)
+
 
     def getClientes(self): 
-        return self.__clientes
+
+        return self._clientes
+	
+
+    def getClientesPorEstado(self, estado):
+        
+        return filter(lambda c:c.getEstado()==estado, self._clientes)
+
 
     def getClientesMorosos(self):
-        clientes_morosos = []
 
-        for cliente in __clientes:
-            if cliente.getEstadoCliente = "moroso":
-                clientes_morosos.append(cliente)
+	return self.getClientesByEstado('moroso')
 
-        return clientes_morosos
 
     def getClientesAlDia(self):
-        clientes_al_dia = []
 
-        for cliente in __clientes:
-            if cliente.getEstadoCliente = "al dia":
-                clientes_al_dia.append(cliente)
+	return self.getClientesByEstado('al_dia')
 
-        return clientes_al_dia
 
     def getClientesTardios(self):
-        clientes_tardios = []
 
-        for cliente in __clientes:
-            if cliente.getEstadoCliente = "tardio"
-                clientes_tardios.append(moroso)
+	return self.getClientesByEstado('tardio')
+
 
     def getClientePorDni(self, dni):
-        clientes_encontrados = []
-        
-        for cliente in self.__clientes:
-            if cliente.getDni() == dni:
-                clientes_encontrados.append(cliente)
 
-        return clientes_encontrados
+        return filter(lambda c:c._dni==dni, self._clientes)
+
 
     def getClientePorNombre(self, nombre):
 
-        clientes_encontrados = []
-    
-        for cliente in self.__clientes:
-            if string.find(cliente.nombre, nombre) > 0:
-                clientes_encontrados.append(cliente)
-
-        return clientes_encontrados
+        return filter(lambda c:c.nombre==nombre, self._clientes)
                 
 
-class ListaPrendas:
 
+class ListaPrendas:
+    """
+    Coleccion de instancias de Prenda.
+    """
 
     def __init__(self):
-        self.__prendas = []
+
+        self._prendas = []
+
 
     def addPrenda(self, prenda):
-        self.__prendas.append(prenda)
-        pub.sendMessaje("PRENDA AGREGADA", self)
+
+        self._prendas.append(prenda)
+        pub.sendMessaje("PRENDA_AGREGADA", self)
+	
 
     def deletePrenda(self, prenda):
-        self.__prendas.remove(prenda)
-        pub.sendMessaje("PRENDA ELIMINADA", self)
+
+        self._prendas.remove(prenda)
+        pub.sendMessaje("PRENDA_ELIMINADA", self)
+
 
     def getPrendas(self): 
+    
         return self.__prendas
 
+
     def getPrendasVendidas(self):
-        prendas_vendidas = []
 
-        for prenda in __prendas:
-            if prenda.getEstadoPrenda = "vendida":
-                prendas_vendidas.append(prenda)
+        return filter(lambda p:p.vendida, self._prendas)
 
-        return prendas_vendidas
 
     def getPrendasDisponibles(self):
-        prendas_disponibles = []
 
-        for prenda in __prendas:
-            if prenda.getEstadoPrenda = "disponible":
-                prendas_disponibles.append(prenda)
+        return filter(lambda p:p.getEstado()=='disponible', self._prendas)
 
-        return prendas_disponibles
 
     def getPrendasCondicionales(self):
-        prendas_condicionales = []
 
-        for prenda in __prendas:
-            if prenda.getEstadoPrenda = "condicional":
-                prendas_condicionales.append(prenda)
+        return filter(lambda p:p.condicional, self._prendas)
 
-        return prendas_condicionales
 
     def getPrendaPorCodigo(self, codigo):
-        prendas_encontradas = []
-        
-        for prenda in self.__prendas:
-            if prenda.getCodigo() == codigo:
-                prendas_encontradas.append(prenda)
 
-        return prendas_encontradas
+        return filter(lambda p:p.getCodigo()==codigo, self._prendas)
+
 
     def getPrendaPorNombre(self, nombre):
-        prendas_encontradas = []
-    
-        for prenda in self.__prendas:
-            if string.find(prenda.nombre, nombre) > 0:
-                prendas_encontradas.append(prenda)
 
-        return prendas_encontradas
-
-
-
-
-
+        return filter(lambda p:p.getNombre()==nombre, self._prendas)
