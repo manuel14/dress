@@ -9,25 +9,27 @@ class Movimiento:
     y/o dinero. Sirve como base para compras, entregas, etc..
     """
 
-    def __init__(self, cliente, fecha=datetime.date.today()):
+    def __init__(self, cliente):
 
-        self.fecha = fecha
-	self.cliente = cliente
+        self.fecha = datetime.date.today()
+        self.cliente = cliente
 
 
     def __cmp__(self, otroMov):
 
         if (self.fecha > otroMov.fecha):
-	    return 1
+            return 1
         elif (self.fecha < otroMov.fecha):
-	    return -1
+            return -1
+        else: 
+            return 0
 
 
 
 class Pago(Movimiento):
     """
     Un pago es una entrega de dinero en cualquier concepto. Ya sea
-    en una Compra, para saldar un Condicional, o saldar una deuda.
+    en una Compra (en concepto de entrega) o saldar una deuda.
     """
 
     def __init__(self, monto, cliente):
@@ -40,26 +42,29 @@ class Pago(Movimiento):
 class Compra(Movimiento):
     """
     Una compra representa un movimiento en el cual se realiza el
-    pago completo de una prenda. Y se retira el producto.
+    pago parcial o completo de una prenda por parte de un cliente. 
+    Y se retira el producto.
     """
 
-    def __init__(self, monto,  prenda, cliente):
+    def __init__(self, monto, prenda, nombre_prenda, cliente):
 
         Movimiento.__init__(self, cliente)
         self.prenda = prenda
+        self.monto = monto
+        self.nombre_prenda = nombre_prenda
 
 
 
 class Condicional(Movimiento):
     """
-    Un concepto villangelense, donde una persona puede llevar una 
-    prenda y decidir si lo va a comprar luego. Sino devuelve la
+    Un concepto de la magia villangelense, donde una persona puede 
+    llevar una prenda y decidir si lo va a comprar luego. Sino devuelve la
     prenda.
     """
 
     def __init__(self, prenda, cliente):
-        
-	Movimiento.__init__(self, cliente)
+
+        Movimiento.__init__(self, cliente)
         self.prenda = prenda
 
 
@@ -107,8 +112,8 @@ class Cliente:
 
     def addPagos(self, pago):
 
-        self._pagos.append(entrega)
-        pub.sendMessaje("ENTREGA_AGREGADA", self)
+        self._pagos.append(pago)
+        pub.sendMessaje("PAGO_AGREGADO", self)
 
 
     def deleteCompra(self, compra):
@@ -117,10 +122,10 @@ class Cliente:
         pub.sendMessaje("COMPRA_ELIMINADA", self)
 
     
-    def deletePagos(self, entrega):
+    def deletePagos(self, pago):
 
-        self._pagos.remove(entrega)
-        pub.sendMessaje("ENTREGA_ELIMINADA", self)
+        self._pagos.remove(pago)
+        pub.sendMessaje("PAGO_ELIMINADO", self)
 
 
     def addCondicional(self, condicional):
@@ -170,23 +175,33 @@ class Cliente:
     def getEstado(self):
 
         # La cantidad de dias en la cual se debe realizar un pago
-    	plazo = datetime.timedelta(days=30)
+        plazo = datetime.timedelta(days=30)
 
-	# Cantidad de dias desde que hizo el ultimo pago hasta hoy
-	delta = (datetime.date.today() - self.getUltimoPago().fecha).days
+        # Cantidad de dias desde que hizo el ultimo pago hasta hoy
+        delta = (datetime.date.today() - self.getUltimoPago().fecha).days
 
-	en_plazo = delta < 30
+        en_plazo = delta < 30
 
-	if self.getSaldo() == 0 or en_plazo:
-	    return "al_dia"
-	else:
-	    
-	    if delta > 60:
-	        return "moroso"
-	    else:
-	        return "tardio"
+        if self.getSaldo() == 0 or en_plazo:
+            return "al_dia"
+        else:
+            
+            if delta > 60:
+                return "moroso"
+            else:
+                return "tardio"
 
+    def getNombre(self):
+        
+        return self._nombre  
 
+    def getTelefono(self):
+        
+        return self._telefono
+
+    def getEmail(self):
+
+        return self._email
 
 class Prenda:
     """
@@ -195,19 +210,19 @@ class Prenda:
 
     _index = 0 # Lleva la cuenta de los codigos de las prendas
 
-    def __init___(self, codigo, nombre, talle, costo, precio):
+    def __init__(self, nombre, talle, costo, precio):
 
-        self._codigo = codigo
-	Prenda._index += 1
+        self._codigo = Prenda._index #el codigo se autoasigna con el valor de _index
+        Prenda._index += 1
 
         self.nombre = nombre
-        self.talle = talle # Talle? esto no iba en el nombre?
+        self.talle = talle
         self.costo = costo
         self.precio = precio
         self.descripcion = descripcion
 
-	self._vendida = False
-	self._condicional = False
+        self._vendida = False
+        self._condicional = False
 
 
     def setNombre(self, nombre):
@@ -242,21 +257,15 @@ class Prenda:
 
     def setVendida(self, vendida):
 
-        if self.condicional:
-	    self.condicional = False
-
         self.vendida = vendida
         pub.sendMessaje("CAMBIO_PRENDA", self)
 
 
     def setCondicional(self, condicional):
 
-        if self.vendida:
-	    self.vendida = False
-    
         self.condicional = condicional
         pub.sendMessaje("CAMBIO_PRENDA", self)
-	
+    
 
     def getEstado(self):
 
@@ -300,7 +309,7 @@ class ListaClientes:
     def getClientes(self): 
 
         return self._clientes
-	
+    
 
     def getClientesPorEstado(self, estado):
         
@@ -309,17 +318,17 @@ class ListaClientes:
 
     def getClientesMorosos(self):
 
-	return self.getClientesByEstado('moroso')
+    return self.getClientesPorEstado('moroso')
 
 
     def getClientesAlDia(self):
 
-	return self.getClientesByEstado('al_dia')
+    return self.getClientesPorEstado('al_dia')
 
 
     def getClientesTardios(self):
 
-	return self.getClientesByEstado('tardio')
+    return self.getClientesPorEstado('tardio')
 
 
     def getClientePorDni(self, dni):
@@ -327,9 +336,9 @@ class ListaClientes:
         return filter(lambda c:c._dni==dni, self._clientes)
 
 
-    def getClientePorNombre(self, nombre):
+    def findClientePorNombre(self, nombre):
 
-        return filter(lambda c:c.nombre==nombre, self._clientes)
+        return filter(lambda c:string.find(string.lower(c.getNombre()), string.lower(nombre)) >= 0, self._clientes)
                 
 
 
@@ -347,7 +356,7 @@ class ListaPrendas:
 
         self._prendas.append(prenda)
         pub.sendMessaje("PRENDA_AGREGADA", self)
-	
+    
 
     def deletePrenda(self, prenda):
 
@@ -357,7 +366,7 @@ class ListaPrendas:
 
     def getPrendas(self): 
     
-        return self.__prendas
+        return self._prendas
 
 
     def getPrendasVendidas(self):
@@ -380,6 +389,34 @@ class ListaPrendas:
         return filter(lambda p:p.getCodigo()==codigo, self._prendas)
 
 
-    def getPrendaPorNombre(self, nombre):
+    def findPrendaPorNombre(self, nombre):
 
-        return filter(lambda p:p.getNombre()==nombre, self._prendas)
+        return filter(lambda p:string.find(string.lower(p.nombre), string.lower(nombre)) >= 0, self._prendas)
+
+
+
+class Carrito:
+    """
+    Almacena terporalmente las prendas antes de realizar la venta
+    """
+
+    def __init__(self):
+
+        self._prendas = []
+
+
+    def addPrenda(self, prenda):
+
+        self._prendas.append(prenda)
+        pub.sendMessaje("PRENDA_AGREGADA_CARRITO", self)
+    
+
+    def deletePrenda(self, prenda):
+
+        self._prendas.remove(prenda)
+        pub.sendMessaje("PRENDA_ELIMINADA_CARRITO", self)
+
+
+    def getPrendas(self): 
+    
+        return self._prendas
