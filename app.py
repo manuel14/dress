@@ -2,6 +2,7 @@ import wx
 import models
 import views
 from wx.lib.pubsub import Publisher as pub
+import cPickle as pickle
 
 class AppController:
     """
