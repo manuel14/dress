@@ -220,8 +220,11 @@ class Prenda:
         self.costo = costo
         self.precio = precio
         self.descripcion = descripcion
-
-        self._vendida = False
+        #si fue vendida cliente apunta al ciente que se vendio, y _condicional esta en False.
+        #si esta como condicional cliente apunta al cliente que lo llevo cndicional y 
+        #condicional esta en verdadero. Si aun no fue vendidia ni esta en condicional, _cliente
+        #no almacena ningun cliente y condicional esta en false.
+        self._cliente = None 
         self._condicional = False
 
 
@@ -255,9 +258,9 @@ class Prenda:
         pub.sendMessaje("CAMBIO_PRENDA", self)
 
 
-    def setVendida(self, vendida):
+    def setCliente(self, cliente):
 
-        self.vendida = vendida
+        self._cliente = cliente
         pub.sendMessaje("CAMBIO_PRENDA", self)
 
 
@@ -271,9 +274,9 @@ class Prenda:
 
         estado = "disponible"
         
-        if self.vendida:
+        if (self._cliente != None) and not self._condicional:
             estado = "vendida"
-        elif self.condicional:
+        elif (self._cliente != None) and self._condicional:
             estado = "condicional"
 
         return estado
@@ -404,19 +407,35 @@ class Carrito:
 
         self._prendas = []
 
+    def addOrDeletePrenda(self, prenda):
 
-    def addPrenda(self, prenda):
-
-        self._prendas.append(prenda)
-        pub.sendMessaje("PRENDA_AGREGADA_CARRITO", self)
-    
-
-    def deletePrenda(self, prenda):
-
-        self._prendas.remove(prenda)
-        pub.sendMessaje("PRENDA_ELIMINADA_CARRITO", self)
-
+        try:
+            self._prendas.remove(prenda)
+            pub.sendMessaje("PRENDA_ELIMINADA_CARRITO", self)          
+        except:
+            self._prendas.append(prenda)
+            pub.sendMessaje("PRENDA_AGREGADA_CARRITO", self)            
 
     def getPrendas(self): 
     
         return self._prendas
+
+class Configuracion:
+    """
+    Guarda la configuracion del sistema
+    """
+
+    def __init__(self):
+        
+        self.mostrar_morosos = True
+        self.mostrar_tardios = True
+        self.mostrar_al_dia = True
+
+        self.mostrar_vendidas = True
+        self.mostrar_condicionales = True
+        self.mostrar_disponibles = True
+
+
+#Creacion del cliente casual, al que se le asignan ventas casuales.
+
+cliente_casual = Cliente(0, 'cliente_casual', '', '')
