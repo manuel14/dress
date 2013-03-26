@@ -321,17 +321,17 @@ class ListaClientes:
 
     def getClientesMorosos(self):
 
-    return self.getClientesPorEstado('moroso')
+        return self.getClientesPorEstado('moroso')
 
 
     def getClientesAlDia(self):
 
-    return self.getClientesPorEstado('al_dia')
+        return self.getClientesPorEstado('al_dia')
 
 
     def getClientesTardios(self):
 
-    return self.getClientesPorEstado('tardio')
+        return self.getClientesPorEstado('tardio')
 
 
     def getClientePorDni(self, dni):
