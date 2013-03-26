@@ -37,3 +37,7 @@ nosetests.xml
 # Editing files
 *~
 *#
+*.swp
+
+# Data Files
+*.dat
