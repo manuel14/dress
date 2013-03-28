@@ -32,7 +32,7 @@ if not exists(DATA_FILE):
     
     objects = {
         'clientes': ListaClientes(),
-	'prendas': ListaPrendas
+	'prendas': ListaPrendas()
     }
 
     save(objects)
