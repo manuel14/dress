@@ -145,7 +145,7 @@ class Cliente:
         return self._dni
 
 
-    def getMovimietos(self):
+    def getMovimientos(self):
 
         movimientos = self._compras + self._pagos + self._condicionales
         movimientos.sort()
@@ -307,7 +307,7 @@ class ListaClientes:
 
         cliente.deleteCondicionales()
 
-        for movimiento in cliente.getMovimietos():
+        for movimiento in cliente.getMovimientos():
             movimiento.cliente = cliente_casual
             
             if isinstance(movimiento, Compra):
