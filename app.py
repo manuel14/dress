@@ -17,6 +17,10 @@ class AppController:
         self.app = app
         self.data = data.load()
 
+        self.clientes = self.data.objects["clientes"]
+        self.compras = self.data.objects["prendas"]
+        self.carrito = Carrito()
+
     	self.main_window = MainFrame(None, -1, "A&M Moda")
 
     	self.initUi()
@@ -59,25 +63,82 @@ class AppController:
 
 
 
-    def MostrarDetallePrenda(self):
+    def mostrarDetallePrenda(self):
+
+        seleccionado = self.main_window.lista_prendas.getFocusedItem()
+        
+        if seleccionado != -1:
+            codigo_prenda = self.main_window.lista_prendas.getItem(seleccionado,0)
+            prenda = self.prendas.getPrendaPorCodigo(int(codigo_prenda))
+            controlador_detalle_prenda = DetallePrendaController(prenda)
+
+    def eliminarPrenda(self):
 
         seleccionado = self.main_window.lista_prendas.getFocusedItem()
 
-        try:
-            item = self.main_window.lista_prendas.getItem()
-        except Exception, e:
-            raise
-        else:
-            pass
-        finally:
-            pass
+        if seleccionado != -1:
+            codigo_prenda = self.main_window.lista_prendas.getItem(seleccionado,0)
+            prenda = self.prendas.getPrendaPorCodigo(int(codigo_prenda))
+            
+            try:
+                self.prendas.deletePrenda(prenda)
+            except NameError:
+                error_dialog = wx.MessageDialog(self, "No puede eliminar una prenda vendida o en condicional", "Advertencia", wx.ICON_INFORMATION)
+                error_dialog.ShowModal()
+                error_dialog.Destroy()
+                self.Close()
 
 
 
+    def nuevaPrenda(self):
 
+        #recibe self para poder agregar la prenda a la lista prendas
+        controlador_nueva_prenda = NuevaPrendaController(self)
 
-
+    def agregarQuitarCarrito(self):
         
+        seleccionado = self.main_window.lista_prendas.getFocusedItem()
+
+        if seleccionado != -1:
+            codigo_prenda = self.main_window.lista_prendas.getItem(seleccionado,0)
+            prenda = self.prendas.getPrendaPorCodigo(int(codigo_prenda))
+
+        carrito.addOrDeletePrenda(prenda)
+
+    def realizarVenta(self):
+        if self.carrito.length() != 0:
+            controlador_venta = Venta_Controller(self.carrito)
+        else:
+            error_dialog = wx.MessageDialog(self, "Seleccione al menos una prenda para vender", "Advertencia", wx.ICON_INFORMATION)
+            error_dialog.ShowModal()
+            error_dialog.Destroy()
+            self.Close()
+
+    def mostrarDetalleCliente(self):
+
+        seleccionado = self.main_window.lista_clientes.getFocusedItem()
+        
+        if seleccionado != -1:
+            dni = self.main_window.lista_clientes.getItem(seleccionado,0)
+            cliente = self.clientes.getClientePorDni(dni)
+            controlador_detalle_cliente = DetalleClienteController(cliente)        
+
+    def eliminarCliente(self):
+
+        seleccionado = self.main_window.lista_clientes.getFocusedItem()
+        
+        if seleccionado != -1:
+            dni = self.main_window.lista_clientes.getItem(seleccionado,0)
+            cliente = self.clientes.getClientePorDni(dni)
+            self.clientes.deleteCliente(cliente)
+            
+
+
+    def nuevoCliente(self):
+        #recibe self para poder agregar la prenda a la lista clientes
+        controlador_nuevo_cliente = NuevoClienteController(self)
+
+
 
 
 if __name__=='__main__':
