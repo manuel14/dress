@@ -110,7 +110,7 @@ class Cliente:
         pub.sendMessage("COMPRA_AGREGADA", self)
 
 
-    def addPagos(self, pago):
+    def addPago(self, pago):
 
         self._pagos.append(pago)
         pub.sendMessage("PAGO_AGREGADO", self)
@@ -145,7 +145,7 @@ class Cliente:
         return self._dni
 
 
-    def getMovimietos(self):
+    def getMovimientos(self):
 
         movimientos = self._compras + self._pagos + self._condicionales
         movimientos.sort()
@@ -305,6 +305,16 @@ class ListaClientes:
 
     def deleteCliente(self, cliente):
 
+        cliente.deleteCondicionales()
+
+        for movimiento in cliente.getMovimientos():
+            movimiento.cliente = cliente_casual
+            
+            if isinstance(movimiento, Compra):
+                cliente_casual.addCompra(movimiento)
+            elif isinstance(movimiento, Pago):
+                cliente_casual.addPago(movimiento)      
+
         self._clientes.remove(cliente)
         pub.sendMessage("CLIENTE_ELIMINADO", self)
 
@@ -363,8 +373,16 @@ class ListaPrendas:
 
     def deletePrenda(self, prenda):
 
+<<<<<<< HEAD
         self._prendas.remove(prenda)
         pub.sendMessage("PRENDA_ELIMINADA", self)
+=======
+        if prenda.getEstado() = 'disponible':
+            self._prendas.remove(prenda)
+            pub.sendMessaje("PRENDA_ELIMINADA", self)
+        else:
+            raise NameError('prenda_no_disponible')
+>>>>>>> b7eebbc6613a31c5543e71deab4b1d900927d265
 
 
     def getPrendas(self): 
@@ -394,7 +412,7 @@ class ListaPrendas:
 
     def findPrendaPorNombre(self, nombre):
 
-        return filter(lambda p:string.find(string.lower(p.nombre), string.lower(nombre)) >= 0, self._prendas)
+        return filter(lambda p:string.find(string.lower(p.nombre), string.lower(nombre)) >= 0, self._prendas)[0]
 
 
 
@@ -438,4 +456,4 @@ class Configuracion:
 
 #Creacion del cliente casual, al que se le asignan ventas casuales.
 
-cliente_casual = Cliente(0, 'cliente_casual', '', '')
+cliente_casual = Cliente("0", 'cliente_casual', '', '')
