@@ -2,6 +2,7 @@ import wx
 import models
 import views
 import data
+import datetime
 from wx.lib.pubsub import Publisher as pub
 import cPickle as pickle
 
@@ -32,22 +33,22 @@ class AppController:
         # =============================================================
 
         # lista_clientes	
-	lista_clientes = self.main_window.lista_clientes
+        lista_clientes = self.main_window.lista_clientes
 
-	# Agregar columnas a lista_clientes
-	lista_clientes.InsertColumn(0, "DNI", width=100)
-	lista_clientes.InsertColumn(1, "Nombre", width=300)
-	lista_clientes.InsertColumn(2, "Telefono", width=200)
-	lista_clientes.InsertColumn(3, "Saldo")
+        # Agregar columnas a lista_clientes
+        lista_clientes.InsertColumn(0, "DNI", width=100)
+        lista_clientes.InsertColumn(1, "Nombre", width=300)
+        lista_clientes.InsertColumn(2, "Telefono", width=200)
+        lista_clientes.InsertColumn(3, "Saldo")
 
-	# Agregar items a lista_clientes
-	for item in self.clientes.getClientes():
+        # Agregar items a lista_clientes
+        for item in self.clientes.getClientes():
 
-	    idx = lista_clientes.GetItemCount()
-	    lista_clientes.InsertStringItem(idx, "%s" % item.getDni()) 
-	    lista_clientes.SetStringItem(idx, 1, "%s" % item.getNombre()) 
-	    lista_clientes.SetStringItem(idx, 2, "%s" % item.getTelefono()) 
-	    lista_clientes.SetStringItem(idx, 3, "%s" % item.getSaldo()) 
+            idx = lista_clientes.GetItemCount()
+            lista_clientes.InsertStringItem(idx, "%s" % item.getDni()) 
+            lista_clientes.SetStringItem(idx, 1, "%s" % item.getNombre()) 
+            lista_clientes.SetStringItem(idx, 2, "%s" % item.getTelefono()) 
+            lista_clientes.SetStringItem(idx, 3, "%s" % item.getSaldo()) 
 	
 
     def connectEvent(self):
@@ -94,17 +95,17 @@ if __name__=='__main__':
 
 #enable o algo asi
 #Controlador Detalle cliente
-class DetalleCLienteController:
+class DetalleClienteController:
     """
     COntrolador Detalle Cliente
     """
 
-    def __init__(self, cliente):
+    def __init__(self, cliente, padre):
 
         self.cliente = cliente
         self.data = data.load()
 
-        self.main_window = MainFrame(None, -1, "A&M Moda")
+        self.main_window = DetalleClienteFrame(padre, -1, "Detalle Cliente %s" %cliente.getNombre())
 
         self.initUi()
 
@@ -115,19 +116,24 @@ class DetalleCLienteController:
         # Cargar las listas Detalle_Cliente
         # =============================================================
 
-        # lista_clientes    
-        lista_clientes = self.main_window.lista_clientes
+        # lista_resumen_clientes    
+        list_resumen_cliente = self.main_window.list_resumen_cliente
 
-        # Agregar columnas a lista_clientes
-        lista_clientes.InsertColumn(0, "DNI", width=100)
-        lista_clientes.InsertColumn(1, "Nombre", width=300)
-        lista_clientes.InsertColumn(2, "Telefono", width=200)
-        lista_clientes.InsertColumn(3, "Saldo")
+        # Agregar columnas a lista_resumen_cliente
+        list_resumen_cliente.InsertColumn(0, "Fecha", width=100)
+        list_resumen_cliente.InsertColumn(1, "Tipo", width=200)
+        list_resumen_cliente.InsertColumn(2, "Codigo", width=200)
+        list_resumen_cliente.InsertColumn(3, "Monto")
 
-        # Agregar items a lista_clientes
-        for item lista_clientes.getClientes():
+        # Agregar items a lista_resumen_cliente
+        for item in self.cliente.getMovimientos():
+
+            idx = list_resumen_cliente.GetItemCount()
+            list_resumen_cliente.InsertStringItem(idx, "%s" % item.compra.fecha 
+            list_resumen_cliente.SetStringItem(idx, 1, "%s" % item.getNombre()) 
+            list_resumen_cliente.SetStringItem(idx, 2, "%s" % item.getTelefono()) 
+            list_resumen_cliente.SetStringItem(idx, 3, "%s" % item.getSaldo()) 
         
-            lista_clientes
 
 #fecha, tipo:va si es condi, compra o pago...., 
 #codigo prenda: el codigo pero si es pago no iene codi, 

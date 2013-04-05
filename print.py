@@ -34,7 +34,7 @@ class ImpresionComprobante()
 
     def GetHtml(self):
         TOTAL = 0
-        html = "<html><table width="310px"><tr><td  width="95px"><img src="aym.jpg"></td><td width="20px"><img src="Separador.jpg"></td><td width="140px"><table><tr><td VALIGN="top" ALIGN="right"><h5>COMPROBANTE Documento no valido como factura</h5></td></tr><tr><td VALIGN="bottom" ALIGN="right">fecha: %d/%d/%d</td></tr></table></td></tr>" %(datetime.date.today().day, datetime.date.today().month, datetime.date.today().year)
+        html = "<html><table width="310px"><tr><td  width="95px"><img src="aym.jpg"></td><td width="20px"><img src="Separador.jpg"></td><td width="140px"><table><tr><td VALIGN="top" ALIGN="right"><h5>COMPROBANTE Documento no valido como factura</h5></td></tr><tr><td VALIGN="bottom" ALIGN="right">Fecha: %d/%d/%d</td></tr></table></td></tr>" %(datetime.date.today().day, datetime.date.today().month, datetime.date.today().year)
         html +="<tr><table width="310px" border="1" style="border:solid;"><tr><th width="60">Tipo</th><th>Detalle</th><th width="60">Monto</th></tr>"
         #el for tampoco se como hacer, de donde a donde....
         for i in compra
