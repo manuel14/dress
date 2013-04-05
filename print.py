@@ -19,7 +19,7 @@ class Printer(HtmlEasyPrinting):
         HtmlEasyPrinting.PreviewText(self, self.GetHtmlText(text))
 
 """No se bien los atributos que llevaria. Yo le puse prenda(para sacar el tipo y costo) 
-y comprar(para saber la cantidad de ropa que compro) pero fijate frankii o leo!!!!"""
+y compra(para saber la cantidad de ropa que compro) pero fijate frankii o leo!!!!"""
 class ImpresionComprobante()
     def __init__(self, prenda, compra):
         self.prenda = prenda
@@ -34,14 +34,14 @@ class ImpresionComprobante()
 
     def GetHtml(self):
         TOTAL = 0
-        html = "<html><table width="310px"><tr><td  width="95px"><img src="aym.jpg"></td><td width="20px"><img src="Separador.jpg"></td><td width="140px"><table><tr><td VALIGN="top" ALIGN="right"><h5>COMPROBANTE Documento no valido como factura</h5></td></tr><tr><td VALIGN="bottom" ALIGN="right">fecha: %d/%d/%d</td></tr></table></td></tr>(datetime.date.today().day, datetime.date.today().month, datetime.date.today().year)"
+        html = "<html><table width="310px"><tr><td  width="95px"><img src="aym.jpg"></td><td width="20px"><img src="Separador.jpg"></td><td width="140px"><table><tr><td VALIGN="top" ALIGN="right"><h5>COMPROBANTE Documento no valido como factura</h5></td></tr><tr><td VALIGN="bottom" ALIGN="right">fecha: %d/%d/%d</td></tr></table></td></tr>" %(datetime.date.today().day, datetime.date.today().month, datetime.date.today().year)
         html +="<tr><table width="310px" border="1" style="border:solid;"><tr><th width="60">Tipo</th><th>Detalle</th><th width="60">Monto</th></tr>"
         #el for tampoco se como hacer, de donde a donde....
         for i in compra
-            html += "<tr><td>%d</td><td>%s</td><td>%g</td></tr>"(i.ladero, i.ladero2, i.laderoladero)
+            html += "<tr><td>%d</td><td>%s</td><td>%g</td></tr>" %(i.ladero, i.ladero2, i.laderoladero)
             TOTAL += i.laderoladero
         html +="</table></tr></table>"
-        html +="<table width="310px"><tr><td width="60"></td><td ALIGN="right">Total a Pagar:</td><td width="60">%d</td></tr></table>"(TOTAL)
+        html +="<table width="310px"><tr><td width="60"></td><td ALIGN="right">Total a Pagar:</td><td width="60">%d</td></tr></table>" %(TOTAL)
         html +="<br><br>"
         html +="<table width="310px"><tr><td></td><td width="250px" ALIGN="centre">GRACIAS POR TU COMPRA!!!</td><td></td></tr></table><html>"
 
