@@ -89,55 +89,55 @@ class Cliente:
     def setNombre(self, nombre):
 
         self._nombre = nombre
-        pub.sendMessaje("CAMBIO_CLIENTE", self)
+        pub.sendMessage("CAMBIO_CLIENTE", self)
 
 
     def setTelefono(self, telefono):
 
         self._telefono = telefono
-        pub.sendMessaje("CAMBIO_CLIENTE", self)
+        pub.sendMessage("CAMBIO_CLIENTE", self)
 
 
     def setEmail(self, email):
 
         self._email = email
-        pub.sendMessaje("CAMBIO_CLIENTE", self)
+        pub.sendMessage("CAMBIO_CLIENTE", self)
 
    
     def addCompra(self, compra):
 
         self._compras.append(compra)
-        pub.sendMessaje("COMPRA_AGREGADA", self)
+        pub.sendMessage("COMPRA_AGREGADA", self)
 
 
     def addPagos(self, pago):
 
         self._pagos.append(pago)
-        pub.sendMessaje("PAGO_AGREGADO", self)
+        pub.sendMessage("PAGO_AGREGADO", self)
 
 
     def deleteCompra(self, compra):
 
         self._compras.remove(compra)
-        pub.sendMessaje("COMPRA_ELIMINADA", self)
+        pub.sendMessage("COMPRA_ELIMINADA", self)
 
     
     def deletePagos(self, pago):
 
         self._pagos.remove(pago)
-        pub.sendMessaje("PAGO_ELIMINADO", self)
+        pub.sendMessage("PAGO_ELIMINADO", self)
 
 
     def addCondicional(self, condicional):
 
         self._condicionales.append(condicional)
-        pub.sendMessaje("CONDICIONAL_AGREGADO", self)
+        pub.sendMessage("CONDICIONAL_AGREGADO", self)
 
 
     def deleteCondicionales(self):
 
         self._condicionales = []
-        pub.sendMessaje("CONDICIONALES_ELIMINADOS")
+        pub.sendMessage("CONDICIONALES_ELIMINADOS")
 
 
     def getDni(self):
@@ -231,43 +231,43 @@ class Prenda:
     def setNombre(self, nombre):
 
         self.nombre = nombre
-        pub.sendMessaje("CAMBIO_PRENDA", self)
+        pub.sendMessage("CAMBIO_PRENDA", self)
 
 
     def setTalle(self, talle):
 
         self.talle = talle
-        pub.sendMessaje("CAMBIO_PRENDA", self)
+        pub.sendMessage("CAMBIO_PRENDA", self)
 
 
     def setCosto(self, costo):
 
         self.costo = costo
-        pub.sendMessaje("CAMBIO_PRENDA", self)
+        pub.sendMessage("CAMBIO_PRENDA", self)
 
     
     def setPrecio(self, precio):
     
         self.precio = precio
-        pub.sendMessaje("CAMBIO_PRENDA", self)
+        pub.sendMessage("CAMBIO_PRENDA", self)
 
 
     def setDescripcion(self, descripcion):
 
         self.descripcion = descripcion
-        pub.sendMessaje("CAMBIO_PRENDA", self)
+        pub.sendMessage("CAMBIO_PRENDA", self)
 
 
     def setCliente(self, cliente):
 
         self._cliente = cliente
-        pub.sendMessaje("CAMBIO_PRENDA", self)
+        pub.sendMessage("CAMBIO_PRENDA", self)
 
 
     def setCondicional(self, condicional):
 
         self.condicional = condicional
-        pub.sendMessaje("CAMBIO_PRENDA", self)
+        pub.sendMessage("CAMBIO_PRENDA", self)
     
 
     def getEstado(self):
@@ -300,13 +300,13 @@ class ListaClientes:
     def addCliente(self, cliente):
 
         self._clientes.append(cliente)
-        pub.sendMessaje("CLIENTE_AGREGADO", self)
+        pub.sendMessage("CLIENTE_AGREGADO", self)
 
 
     def deleteCliente(self, cliente):
 
         self._clientes.remove(cliente)
-        pub.sendMessaje("CLIENTE_ELIMINADO", self)
+        pub.sendMessage("CLIENTE_ELIMINADO", self)
 
 
     def getClientes(self): 
@@ -358,13 +358,13 @@ class ListaPrendas:
     def addPrenda(self, prenda):
 
         self._prendas.append(prenda)
-        pub.sendMessaje("PRENDA_AGREGADA", self)
+        pub.sendMessage("PRENDA_AGREGADA", self)
     
 
     def deletePrenda(self, prenda):
 
         self._prendas.remove(prenda)
-        pub.sendMessaje("PRENDA_ELIMINADA", self)
+        pub.sendMessage("PRENDA_ELIMINADA", self)
 
 
     def getPrendas(self): 
@@ -411,10 +411,10 @@ class Carrito:
 
         try:
             self._prendas.remove(prenda)
-            pub.sendMessaje("PRENDA_ELIMINADA_CARRITO", self)          
+            pub.sendMessage("PRENDA_ELIMINADA_CARRITO", self)          
         except:
             self._prendas.append(prenda)
-            pub.sendMessaje("PRENDA_AGREGADA_CARRITO", self)            
+            pub.sendMessage("PRENDA_AGREGADA_CARRITO", self)            
 
     def getPrendas(self): 
     
