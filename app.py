@@ -17,6 +17,8 @@ class AppController:
         self.app = app
         self.data = data.load()
 
+	self.clientes = self.data['clientes']
+
     	self.main_window = MainFrame(None, -1, "A&M Moda")
 
     	self.initUi()
@@ -39,20 +41,25 @@ class AppController:
 	lista_clientes.InsertColumn(3, "Saldo")
 
 	# Agregar items a lista_clientes
-	for item lista_clientes.getClientes():
-	    
-            lista_clientes
+	for item in self.clientes.getClientes():
+
+	    idx = lista_clientes.GetItemCount()
+	    lista_clientes.InsertStringItem(idx, "%s" % item.getDni()) 
+	    lista_clientes.SetStringItem(idx, 1, "%s" % item.getNombre()) 
+	    lista_clientes.SetStringItem(idx, 2, "%s" % item.getTelefono()) 
+	    lista_clientes.SetStringItem(idx, 3, "%s" % item.getSaldo()) 
 	
+
     def connectEvent(self):
         
-        #pestaña prendas
+        # pestania prendas
         self.main_window.boton_detalle_prendas.Bind(wx.EVT_BUTTON, self.mostrarDetallePrenda)
         self.main_window.boton_eliminar_prendas.Bind(wx.EVT_BUTTON, self.eliminarPrenda)
         self.main_window.boton_nuevo_prendas.Bind(wx.EVT_BUTTON, self.nuevaPrenda)
         self.main_window.boton_agregar_quitar(wx.EVT_BUTTON, self.agregarQuitarCarrito)
         self.main_window.boton_realizar_venta(wx.EVT_BUTTON, self.realizarVenta)
 
-        #pestaña clientes
+        #pestania clientes
         self.main_window.boton_detalle_clientes.Bind(wx.EVT_BUTTON, self.mostrarDetalleCliente)
         self.main_window.boton_eliminar_clientes.Bind(wx.EVT_BUTTON, self.eliminarCliente)
         self.main_window.boton_nuevo_clientes.Bind(wx.EVT_BUTTON, self.nuevoCliente)
