@@ -17,11 +17,11 @@ class AppController:
         self.app = app
         self.data = data.load()
 
-	self.main_window = MainFrame(None, -1, "A&M Moda")
+    	self.main_window = MainFrame(None, -1, "A&M Moda")
 
-	self.initUi()
+    	self.initUi()
 
-	self.main_window.Show()
+    	self.main_window.Show()
 
 
     def initUi(self):
@@ -43,6 +43,40 @@ class AppController:
 	    
             lista_clientes
 	
+    def connectEvent(self):
+        
+        #pestaña prendas
+        self.main_window.boton_detalle_prendas.Bind(wx.EVT_BUTTON, self.mostrarDetallePrenda)
+        self.main_window.boton_eliminar_prendas.Bind(wx.EVT_BUTTON, self.eliminarPrenda)
+        self.main_window.boton_nuevo_prendas.Bind(wx.EVT_BUTTON, self.nuevaPrenda)
+        self.main_window.boton_agregar_quitar(wx.EVT_BUTTON, self.agregarQuitarCarrito)
+        self.main_window.boton_realizar_venta(wx.EVT_BUTTON, self.realizarVenta)
+
+        #pestaña clientes
+        self.main_window.boton_detalle_clientes.Bind(wx.EVT_BUTTON, self.mostrarDetalleCliente)
+        self.main_window.boton_eliminar_clientes.Bind(wx.EVT_BUTTON, self.eliminarCliente)
+        self.main_window.boton_nuevo_clientes.Bind(wx.EVT_BUTTON, self.nuevoCliente)
+
+
+
+    def MostrarDetallePrenda(self):
+
+        seleccionado = self.main_window.lista_prendas.getFocusedItem()
+
+        try:
+            item = self.main_window.lista_prendas.getItem()
+        except Exception, e:
+            raise
+        else:
+            pass
+        finally:
+            pass
+
+
+
+
+
+
         
 
 
