@@ -41,3 +41,6 @@ nosetests.xml
 
 # Data Files
 *.dat
+
+# testing 
+shell.py
