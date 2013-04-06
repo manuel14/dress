@@ -46,12 +46,11 @@ class Compra(Movimiento):
     Y se retira el producto.
     """
 
-    def __init__(self, monto, prenda, nombre_prenda, cliente):
+    def __init__(self, monto, prenda, cliente):
 
         Movimiento.__init__(self, cliente)
         self.prenda = prenda
         self.monto = monto
-        self.nombre_prenda = nombre_prenda
 
 
 
@@ -74,12 +73,13 @@ class Cliente:
     Representa a un Cliente, y contiene su informacion.
     """
 
-    def __init__(self, dni, nombre, telefono, email):
+    def __init__(self, dni, nombre, telefono, email, fecha_nacimiento):
 
         self._dni = dni
         self._nombre = nombre
         self._telefono = telefono
         self._email = email
+        self._fecha_nacimiento = fecha_nacimiento
 
         self._compras = []
         self._pagos = []
@@ -101,6 +101,10 @@ class Cliente:
     def setEmail(self, email):
 
         self._email = email
+        pub.sendMessaje("CAMBIO_CLIENTE", self)
+
+    def setFechaNacimiento(fecha):
+        self._fecha_nacimiento = fecha
         pub.sendMessaje("CAMBIO_CLIENTE", self)
 
    
@@ -422,12 +426,18 @@ class Carrito:
 
     def addOrDeletePrenda(self, prenda):
 
-        try:
-            self._prendas.remove(prenda)
-            pub.sendMessaje("PRENDA_ELIMINADA_CARRITO", self)          
-        except:
-            self._prendas.append(prenda)
-            pub.sendMessaje("PRENDA_AGREGADA_CARRITO", self)            
+        #agrega o quita una prenda al carrito, siempre y cuando este disponible
+        
+        if prenda.getEstado() = 'disponible':
+            try:
+                self._prendas.remove(prenda)
+                pub.sendMessaje("PRENDA_ELIMINADA_CARRITO", self)          
+            except:
+                self._prendas.append(prenda)
+                pub.sendMessaje("PRENDA_AGREGADA_CARRITO", self)  
+        else:
+            raise NameError('prenda_no_disponible')
+
 
     def getPrendas(self): 
     
