@@ -21,6 +21,8 @@ class AppController:
         self.compras = self.data.objects["prendas"]
         self.carrito = Carrito()
 
+        self.configuracion = self.data.objects["configuracion"]
+
 
     	self.main_window = MainFrame(None, -1, "A&M Moda")
 
@@ -44,7 +46,7 @@ class AppController:
     	lista_clientes.InsertColumn(3, "Saldo")
 
 
-	# Agregar items a lista_clientes
+	   # Agregar items a lista_clientes
     	for item in self.clientes.getClientes():
 
     	    idx = lista_clientes.GetItemCount()
@@ -61,16 +63,25 @@ class AppController:
         self.main_window.boton_detalle_prendas.Bind(wx.EVT_BUTTON, self.mostrarDetallePrenda)
         self.main_window.boton_eliminar_prendas.Bind(wx.EVT_BUTTON, self.eliminarPrenda)
         self.main_window.boton_nuevo_prendas.Bind(wx.EVT_BUTTON, self.nuevaPrenda)
-        self.main_window.boton_agregar_quitar(wx.EVT_BUTTON, self.agregarQuitarCarrito)
-        self.main_window.boton_realizar_venta(wx.EVT_BUTTON, self.realizarVenta)
+        self.main_window.boton_agregar_quitar.Bind(wx.EVT_BUTTON, self.agregarQuitarCarrito)
+        self.main_window.boton_realizar_venta.Bind(wx.EVT_BUTTON, self.realizarVenta)
+
+        self.main_window.texto_buscar_prendas.Bind(wx.EVT_SET_FOCUS, self.onSetFocusBuscarPrendas)
+        self.main_window.texto_buscar_prendas.Bind(wx.KILL_FOCUS, self.onKillFocusBuscarPrendas)
+        self.main_window.texto_buscar_prendas.Bind(wx.EVT_TEXT_ENTER, self.buscarPrendas)
+
 
         #pestania clientes
         self.main_window.boton_detalle_clientes.Bind(wx.EVT_BUTTON, self.mostrarDetalleCliente)
         self.main_window.boton_eliminar_clientes.Bind(wx.EVT_BUTTON, self.eliminarCliente)
         self.main_window.boton_nuevo_clientes.Bind(wx.EVT_BUTTON, self.nuevoCliente)
 
+        self.main_window.texto_buscar_clientes.Bind(wx.EVT_SET_FOCUS, self.onSetFocusBuscarClientes)
+        self.main_window.texto_buscar_clientes.Bind(wx.KILL_FOCUS, self.onKillFocusBuscarClientes)
+        self.main_window.texto_buscar_prendas.Bind(wx.EVT_TEXT_ENTER, self.buscarClientes)
 
 
+    #metodos de la pestania prendas
     def mostrarDetallePrenda(self):
 
         seleccionado = self.main_window.lista_prendas.getFocusedItem()
@@ -128,6 +139,35 @@ class AppController:
             error_dialog.Destroy()
             self.Close()
 
+    def onSetFocusBuscarPrendas(self):
+        self.main_window.texto_buscar_prendas.Clear()
+
+    def onKillFocusBuscarPrendas(self):
+        self.main_window.texto_buscar_prendas.SetValue('Buscar...')
+
+    def buscarPrendas(self):
+        seleccionado = self.main_window.radio_box_prendas.GetSelection()
+        prendas_activas = self.prendas.getPrendasActivas(self.configuracion)
+        value = self.main_window.texto_buscar_prendas.GetValue()
+        lista_a_cargar = ListaPrendas()
+
+        if seleccionado == 0:
+            prenda_buscada = prendas_activas.getPrendaPorCodigo(value)
+            #como solo devuelve un elemnto lo agrego a la lista
+            lista_a_cargar.addPrenda(prenda_buscada)
+
+        elif seleccionado == 1:
+            prenda_buscada = prendas_activas.findPrendaPorNombre(value)
+            #como devuelve mas de un elemento los agrego con un for
+            for prenda in prenda_buscada:
+                lista_a_cargar.addPrenda(prenda)
+
+        self.cargarListaPrendas(lista_a_cargar)
+
+
+    
+    #metodos de la pestania clientes
+
     def mostrarDetalleCliente(self):
 
         seleccionado = self.main_window.lista_clientes.getFocusedItem()
@@ -145,15 +185,37 @@ class AppController:
             dni = self.main_window.lista_clientes.getItem(seleccionado,0)
             cliente = self.clientes.getClientePorDni(dni)
             self.clientes.deleteCliente(cliente)
-            
-
-
+    
     def nuevoCliente(self):
         #recibe self para poder agregar la prenda a la lista clientes
         controlador_nuevo_cliente = NuevoClienteController(self, self.main_window)
 
+    def onSetFocusBuscarClientes(self):
+        self.main_window.texto_buscar_clientes.Clear()
 
+    def onKillFocusBuscarClientes(self):
+        self.main_window.texto_buscar_clientes.SetValue('Buscar...')
 
+    def buscarClientes(self):
+        seleccionado = self.main_window.radio_box_clientes.GetSelection()
+        clientes_activos = self.clientes.getClientesActivos(self.configuracion)
+        value = self.main_window.texto_buscar_clientes.GetValue()
+        lista_a_cargar = ListaClientes()
+
+        if seleccionado == 0:
+            cliente_buscado = clientes_activos.getClientePorDni(value)
+            #como solo devuelve un elemnto lo agrego a la lista
+            lista_a_cargar.addCliente(cliente_buscado)
+
+        elif seleccionado == 1:
+            cliente_buscado = clientes_activos.findClientePorNombre(value)
+            #como devuelve mas de un elemento los agrego con un for
+            for cliente in cliente_buscado:
+                lista_a_cargar.addCliente(cliente)
+
+        self.cargarListaClientes(lista_a_cargar)
+
+    
 
 if __name__=='__main__':
     

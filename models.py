@@ -350,13 +350,32 @@ class ListaClientes:
 
     def getClientePorDni(self, dni):
 
-        return filter(lambda c:c._dni==dni, self._clientes)
+        return filter(lambda c:c._dni==dni, self._clientes)[0]
 
 
     def findClientePorNombre(self, nombre):
 
         return filter(lambda c:string.find(string.lower(c.getNombre()), string.lower(nombre)) >= 0, self._clientes)
                 
+
+    def getClientesActivos(self, configuracion):
+
+        clientes_activos = ListaClientes()
+
+        if configuracion.mostrar_morosos:
+            for cliente in self.getClientesMorosos():
+                clientes_activos.addCliente(cliente)
+
+        if configuracion.mostrar_tardios:
+            for prenda in self.getClientesTardios():
+                clientes_activos.addCliente(cliente)
+       
+        if configuracion.mostrar_al_dia:
+            for prenda in self.getClientesAlDia():
+                clientes_activos.addCliente(cliente)
+
+        return clientes_activos
+
 
 
 class ListaPrendas:
@@ -407,14 +426,31 @@ class ListaPrendas:
 
     def getPrendaPorCodigo(self, codigo):
 
-        return filter(lambda p:p.getCodigo()==codigo, self._prendas)
+        return filter(lambda p:p.getCodigo()==codigo, self._prendas)[0]
 
 
     def findPrendaPorNombre(self, nombre):
 
         return filter(lambda p:string.find(string.lower(p.nombre), string.lower(nombre)) >= 0, self._prendas)[0]
 
+    #este metodo filtra las prendas que se deben mostrar segun la configuracion actual
+    def getPrendasActivas(self, configuracion):
 
+        prendas_activas = ListaPrendas()
+
+        if configuracion.mostrar_vendidas:
+            for prenda in self.getPrendasVendidas():
+                prendas_activas.addPrenda(prenda)
+
+        if configuracion.mostrar_condicionales:
+            for prenda in self.getPrendasCondicionales():
+                prendas_activas.addPrenda(prenda)
+       
+        if configuracion.mostrar_disponibles:
+            for prenda in self.getPrendasDisponibles():
+                prendas_activas.addPrenda(prenda)
+
+        return prendas_activas
 
 class Carrito:
     """
@@ -457,6 +493,35 @@ class Configuracion:
         self.mostrar_vendidas = True
         self.mostrar_condicionales = True
         self.mostrar_disponibles = True
+
+        def setMostrarMorosos(estado):
+            self.mostrar_morosos = estado
+            pub.sendMessage("MOROSOS_CAMBIO")
+
+        def setMostrarTardios(estado):
+            self.mostrar_tardios = estado
+            pub.sendMessage("TARDIO_CAMBIO")
+
+        def setMostrarAlDia(estado):
+            self.mostrar_al_dia = estado
+            pub.sendMessage("AL_DIA_CAMBIO")
+
+        def setMostrarVendidas(estado):
+            self.mostrar_vendidas = estado
+            pub.sendMessage("VENDIDAS_CAMBIO")
+       
+        def setMostrarCondicionales(estado):
+            self.mostrar_condicionales = estado
+            pub.sendMessage("CONDICIONALES_CAMBIO")
+
+        def setMostrarDisponibles(estado):
+            self.mostrar_disponibles = estado
+            pub.sendMessage("DISPONIBLES_CAMBIO")
+
+
+
+
+
 
 
 #Creacion del cliente casual, al que se le asignan ventas casuales.
