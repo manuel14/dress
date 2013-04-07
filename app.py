@@ -59,7 +59,7 @@ class AppController:
 
     def connectEvent(self):
         
-        # pestania prendas
+        # pestania prendas eventos
         self.main_window.boton_detalle_prendas.Bind(wx.EVT_BUTTON, self.mostrarDetallePrenda)
         self.main_window.boton_eliminar_prendas.Bind(wx.EVT_BUTTON, self.eliminarPrenda)
         self.main_window.boton_nuevo_prendas.Bind(wx.EVT_BUTTON, self.nuevaPrenda)
@@ -71,7 +71,7 @@ class AppController:
         self.main_window.texto_buscar_prendas.Bind(wx.EVT_TEXT_ENTER, self.buscarPrendas)
 
 
-        #pestania clientes
+        #pestania clientes eventos
         self.main_window.boton_detalle_clientes.Bind(wx.EVT_BUTTON, self.mostrarDetalleCliente)
         self.main_window.boton_eliminar_clientes.Bind(wx.EVT_BUTTON, self.eliminarCliente)
         self.main_window.boton_nuevo_clientes.Bind(wx.EVT_BUTTON, self.nuevoCliente)
@@ -79,6 +79,28 @@ class AppController:
         self.main_window.texto_buscar_clientes.Bind(wx.EVT_SET_FOCUS, self.onSetFocusBuscarClientes)
         self.main_window.texto_buscar_clientes.Bind(wx.KILL_FOCUS, self.onKillFocusBuscarClientes)
         self.main_window.texto_buscar_prendas.Bind(wx.EVT_TEXT_ENTER, self.buscarClientes)
+
+        #suscripcion a eventos de Cliente
+        pub.subscribe(self.actualizarCliente, "CAMBIO_CLIENTE")
+        pub.subscribe(self.actualizarCliente, "COMPRA_AGREGADA")
+        pub.subscribe(self.actualizarCliente, "PAGO_AGREGADO")
+        pub.subscribe(self.actualizarCliente, "COMPRA_ELIMINADA")
+        pub.subscribe(self.actualizarCliente, "PAGO_ELIMINADO")
+
+        #suscripcion a eventos de Prenda
+        pub.subscribe(self.actualizarPrenda, "CAMBIO_PRENDA")
+
+        #suscripcion a eventos de ListaClientes
+        pub.subscribe(self.clienteAgregado, "CLIENTE_AGREGADO")
+        pub.suscribe(self.clienteEliminado, "CLIENTE_ELIMINADO")
+
+        #suscripcion a eventos de ListaPrendas
+        pub.suscribe(self.prendaAgregada, "PRENDA_AGREGADA")
+        pub.suscribe(self.prendaEliminada, "PRENDA_ELIMINADA")
+
+        #suscripcion a eventos de Configuracion
+        pub.suscribe(self.actualizadaConfiguracionPrendas, "CONFIGURACION_PRENDAS_CAMBIO")
+        pub.suscribe(self.actualizadaConfiguracionclientes, "CONFIGURACION_CLIENTES_CAMBIO")
 
 
     #metodos de la pestania prendas
@@ -215,7 +237,43 @@ class AppController:
 
         self.cargarListaClientes(lista_a_cargar)
 
-    
+
+    #metodos de suscripcion a eventos
+    def actualizarCliente(self, message):
+        #este metodo debe actualizar en la lista clientes el cliente
+        #debe buscarlo en la tabla y modificarlo, no olvidar que ademas
+        #de modificar los datos se debe modificar su estado (color)
+        pass
+
+    def actualizarPrenda(self,message):
+        #este metodo debe actualizar en la lista prendas la prenda
+        #debe buscarla en la tabla y modificarla, no olvidar que ademas
+        #de modificar los datos se debe modificar su estado (color)
+        pass
+
+    def clienteAgregado(self, message):
+        #este metodo debe agregar el cliente, posiblemente use el mismo 
+        #que se utiliza para cargar los elemenotos a la lista
+        pass
+
+    def clienteEliminado(self, message):
+        #este metodo debe eliminar el cliente de la lista
+        pass
+
+    def prendaAgregada(self, message):
+        #este metodo debe agregar la prenda, posiblemente use el mismo 
+        #que se utiliza para cargar los elemenotos a la lista
+        pass
+
+    def prendaEliminada(self, message):
+        #este metodo debe eliminar la prenda de la lista
+        pass
+
+    def actualizadaConfiguracionPrendas(self, message):
+        #debe recargar la lista de prendas, con la nueva configuracion
+
+    def actualizadaConfiguracionClientes(self, message):
+        #debe recargar la lista de clientes, con la nueva configuracion
 
 if __name__=='__main__':
     

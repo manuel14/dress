@@ -141,7 +141,7 @@ class Cliente:
     def deleteCondicionales(self):
 
         self._condicionales = []
-        pub.sendMessage("CONDICIONALES_ELIMINADOS")
+        pub.sendMessage("CONDICIONALES_ELIMINADOS", self)
 
 
     def getDni(self):
@@ -270,7 +270,7 @@ class Prenda:
 
     def setCondicional(self, condicional):
 
-        self.condicional = condicional
+        self._condicional = condicional
         pub.sendMessage("CAMBIO_PRENDA", self)
     
 
@@ -496,27 +496,27 @@ class Configuracion:
 
         def setMostrarMorosos(estado):
             self.mostrar_morosos = estado
-            pub.sendMessage("MOROSOS_CAMBIO")
+            pub.sendMessage("CONFIGURACION_CLIENTES_CAMBIO", self)
 
         def setMostrarTardios(estado):
             self.mostrar_tardios = estado
-            pub.sendMessage("TARDIO_CAMBIO")
+            pub.sendMessage("CONFIGURACION_CLIENTES_CAMBIO", self)
 
         def setMostrarAlDia(estado):
             self.mostrar_al_dia = estado
-            pub.sendMessage("AL_DIA_CAMBIO")
+            pub.sendMessage("CONFIGURACION_CLIENTES_CAMBIO", self)
 
         def setMostrarVendidas(estado):
             self.mostrar_vendidas = estado
-            pub.sendMessage("VENDIDAS_CAMBIO")
+            pub.sendMessage("CONFIGURACION_PRENDAS_CAMBIO", self)
        
         def setMostrarCondicionales(estado):
             self.mostrar_condicionales = estado
-            pub.sendMessage("CONDICIONALES_CAMBIO")
+            pub.sendMessage("CONFIGURACION_PRENDAS_CAMBIO", self)
 
         def setMostrarDisponibles(estado):
             self.mostrar_disponibles = estado
-            pub.sendMessage("DISPONIBLES_CAMBIO")
+            pub.sendMessage("CONFIGURACION_PRENDAS_CAMBIO",self)
 
 
 
