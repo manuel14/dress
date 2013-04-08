@@ -409,8 +409,6 @@ class ListaPrendas:
         else:
             raise NameError('prenda_no_disponible')
 
-
-
     def getPrendas(self): 
     
         return self._prendas
