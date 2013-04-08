@@ -21,6 +21,13 @@ def load():
 
     return data
 
+def backup(self, f): # f es la ruta donde se va a guardar el backup.
+    """crear un archivo de back up"""
+    bf = open(f, 'w')
+    bp = pickle.Pickler(bf)
+    bp.dump(self.objects)
+    bf.close()
+
 
 
 
@@ -32,7 +39,8 @@ if not exists(DATA_FILE):
     
     objects = {
         'clientes': ListaClientes(),
-	'prendas': ListaPrendas()
+        'prendas': ListaPrendas(),
+        'configuracion': Configuracion()
     }
 
     save(objects)
