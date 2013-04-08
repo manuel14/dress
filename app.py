@@ -271,7 +271,7 @@ class AppController:
         #de modificar los datos se debe modificar su estado (color)
         pass
 
-    def actualizarPrenda(self,message):
+    def actualizarPrenda(self, message):
         #este metodo debe actualizar en la lista prendas la prenda
         #debe buscarla en la tabla y modificarla, no olvidar que ademas
         #de modificar los datos se debe modificar su estado (color)
@@ -313,13 +313,21 @@ class AppController:
     #metodos barra menu------------------------------------------------------------
 
     def realizarBackup(self):
-        #este metodo realiza el backup (copiar sgpd)
-        pass
+        
+        # Abrir dialogo para seleccionar ruta de destino del archivo de backup
+        file_dialog = wx.FileDialog(self, style = wx.SAVE)
+        d = datetime.date.today()
+        filename = "%s-%s-%s-backup.bak" % (d.day, d.month, d.year)
+        file_dialog.SetFilename(filename)
+        file_dialog.SetWildcard("Archivos de Backup (*.bak)|*.bak|Todos los archivos (*.*)|*.*")
+        if file_dialog.ShowModal() == wx.ID_OK:
+                data.backup(file_dialog.GetPath())
+                msgbox = wx.MessageDialog(self, "Archivo de backup creado satisfactoriamente.", "INFO", style=wx.ICON_INFORMATION)
+                msgbox.ShowModal()
 
     def restaurarBackup(self):
-        #este metodo restaura el backup (copiar sgpd)
-        pass
-
+        #leo copia del sgpd vos que entendes tu codigo jaja
+    
     def verDisponibles(self):
         self.main_window.configuracion.setMostrarDisponibes(self.ver_disponibles.IsChecked())        
 
@@ -388,12 +396,42 @@ class AppController:
         #se debe instanciar la ventana que contenga los telefonos        
 
     def listaCumpleaniosMes(self):
-        #este metodo muestra los cumpleanios del mes
-        pass
+        cumpleanieros = []
+
+        for cliente in clientes.getClientes():
+            if cliente.cumpleAniosEsteMes():
+                cumpleanieros.append(cliente)
+
+        #se debe instanciar la ventana que contenga los clientes    
+
 
     def informeTotales(self):
-        #este metodo muestra el informe de los totales
-        pass
+        total_ganancias = 0
+        total_deuda = 0
+        total_capital_en_prendas = 0
+        total_inversion = 0
+
+
+        for prenda in prendas:
+            
+            total_inversion += prenda.precio
+
+            if prenda.getEstado() == 'vendida'
+                total ganancias += (prenda.precio - prenda.costo)
+
+            if (prenda.getEstado() == 'disponible') or (prenda.getEstado() == 'condicional'):
+                total_capital_en_prendas += prenda.precio
+
+        for cliente in clientes:
+
+            total_deuda += cliente.getSaldo()
+
+        #se debe instanciar la ventana que tiene los totales
+
+
+
+
+
 
 
 if __name__=='__main__':

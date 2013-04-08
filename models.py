@@ -207,6 +207,13 @@ class Cliente:
 
         return self._email
 
+    def cumpleAniosEsteMes(self):
+
+        if (self._fecha_nacimiento.month == datetime.date.today().month):
+            return True
+        else: 
+            return: False
+
 class Prenda:
     """
     Representa una prenda de ropa. El producto del negocio.
