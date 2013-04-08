@@ -17,7 +17,7 @@ class AppController:
         self.app = app
         self.data = data.load()
 
-	self.clientes = self.data['clientes']
+    	self.clientes = self.data['clientes']
 
     	self.main_window = MainFrame(None, -1, "A&M Moda")
 
@@ -32,13 +32,13 @@ class AppController:
         # =============================================================
 
         # lista_clientes	
-	lista_clientes = self.main_window.lista_clientes
+    	lista_clientes = self.main_window.lista_clientes
 
-	# Agregar columnas a lista_clientes
-	lista_clientes.InsertColumn(0, "DNI", width=100)
-	lista_clientes.InsertColumn(1, "Nombre", width=300)
-	lista_clientes.InsertColumn(2, "Telefono", width=200)
-	lista_clientes.InsertColumn(3, "Saldo")
+    	# Agregar columnas a lista_clientes
+    	lista_clientes.InsertColumn(0, "DNI", width=100)
+    	lista_clientes.InsertColumn(1, "Nombre", width=300)
+    	lista_clientes.InsertColumn(2, "Telefono", width=200)
+    	lista_clientes.InsertColumn(3, "Saldo")
 
 	# Agregar items a lista_clientes
 	for item in self.clientes.getClientes():
@@ -78,13 +78,6 @@ class AppController:
             pass
         finally:
             pass
-
-
-
-
-
-
-        
 
 
 if __name__=='__main__':
