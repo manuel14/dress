@@ -105,7 +105,7 @@ class Cliente:
 
     def setFechaNacimiento(fecha):
         self._fecha_nacimiento = fecha
-        pub.sendMessaje("CAMBIO_CLIENTE", self)
+        pub.sendMessage("CAMBIO_CLIENTE", self)
 
    
     def addCompra(self, compra):
@@ -398,7 +398,7 @@ class ListaPrendas:
 
         if prenda.getEstado() = 'disponible':
             self._prendas.remove(prenda)
-            pub.sendMessaje("PRENDA_ELIMINADA", self)
+            pub.sendMessage("PRENDA_ELIMINADA", self)
         else:
             raise NameError('prenda_no_disponible')
 
@@ -468,16 +468,21 @@ class Carrito:
         if prenda.getEstado() = 'disponible':
             try:
                 self._prendas.remove(prenda)
-                pub.sendMessaje("PRENDA_ELIMINADA_CARRITO", self)          
+                pub.sendMessage("PRENDA_ELIMINADA_CARRITO", self)          
             except:
                 self._prendas.append(prenda)
-                pub.sendMessaje("PRENDA_AGREGADA_CARRITO", self)  
+                pub.sendMessage("PRENDA_AGREGADA_CARRITO", self)  
         else:
             raise NameError('prenda_no_disponible')
 
     def getPrendas(self): 
     
         return self._prendas
+
+    def vaciarCarrito(self):
+        self._prendas = []
+
+        pub.sendMessage("CARRITO_VACIADO", self)
 
 class Configuracion:
     """

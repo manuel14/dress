@@ -59,7 +59,7 @@ class AppController:
 
     def connectEvent(self):
         
-        # pestania prendas eventos
+        #vinculacion pestania prendas eventos
         self.main_window.boton_detalle_prendas.Bind(wx.EVT_BUTTON, self.mostrarDetallePrenda)
         self.main_window.boton_eliminar_prendas.Bind(wx.EVT_BUTTON, self.eliminarPrenda)
         self.main_window.boton_nuevo_prendas.Bind(wx.EVT_BUTTON, self.nuevaPrenda)
@@ -71,7 +71,7 @@ class AppController:
         self.main_window.texto_buscar_prendas.Bind(wx.EVT_TEXT_ENTER, self.buscarPrendas)
 
 
-        #pestania clientes eventos
+        #viculacion pestania clientes eventos
         self.main_window.boton_detalle_clientes.Bind(wx.EVT_BUTTON, self.mostrarDetalleCliente)
         self.main_window.boton_eliminar_clientes.Bind(wx.EVT_BUTTON, self.eliminarCliente)
         self.main_window.boton_nuevo_clientes.Bind(wx.EVT_BUTTON, self.nuevoCliente)
@@ -80,6 +80,25 @@ class AppController:
         self.main_window.texto_buscar_clientes.Bind(wx.KILL_FOCUS, self.onKillFocusBuscarClientes)
         self.main_window.texto_buscar_prendas.Bind(wx.EVT_TEXT_ENTER, self.buscarClientes)
 
+        #vinculacion eventos menu
+
+        self.main_window.realizar_backup.Bind(wx.EVT_MENU, self.realizarBackup)
+        self.main_window.restaurar_backup.Bind(wx.EVT_MENU, self.restaurarBackup) 
+        self.main_window.ver_disponibles.Bind(wx.EVT_MENU, self.verDisponibles) 
+        self.main_window.ver_condicionales.Bind(wx.EVT_MENU, self.verCondicionales) 
+        self.main_window.ver_vendidas.Bind(wx.EVT_MENU, self.verVendidas)
+        self.main_window.ver_al_dia.Bind(wx.EVT_MENU, self.verAlDia) 
+        self.main_window.ver_tardios.Bind(wx.EVT_MENU, self.verTardios) 
+        self.main_window.ver_morosos.Bind(wx.EVT_MENU, self.verMorosos) 
+        self.main_window.vaciar_carrito.Bind(wx.EVT_MENU, self.vaciarCarrito)
+        self.main_window.borrar_todo.Bind(wx.EVT_MENU, self.borrarTodo) 
+        self.main_window.informe_lista_correos.Bind(wx.EVT_MENU, self.listaCorreos)
+        self.main_window.informe_lista_correos_morosos.Bind(wx.EVT_MENU, self.listaCorreosMorosos) 
+        self.main_window.informe_lista_telefonos.Bind(wx.EVT_MENU, self.listaTelefonos) 
+        self.main_window.informe_lista_telefonos_morosos.Bind(wx.EVT_MENU, self.listaTelefonosMorosos)
+        self.main_window.informe_lista_cumpleanios_mes.Bind(wx.EVT_MENU, self.listaCumpleaniosMes)
+        self.main_window.informe_totales.Bind(wx.EVT_MENU, self.informeTotales)
+        
         #suscripcion a eventos de Cliente
         pub.subscribe(self.actualizarCliente, "CAMBIO_CLIENTE")
         pub.subscribe(self.actualizarCliente, "COMPRA_AGREGADA")
@@ -102,8 +121,15 @@ class AppController:
         pub.suscribe(self.actualizadaConfiguracionPrendas, "CONFIGURACION_PRENDAS_CAMBIO")
         pub.suscribe(self.actualizadaConfiguracionclientes, "CONFIGURACION_CLIENTES_CAMBIO")
 
+        #suscripcion a eventos carrito
+        pub.suscribe(self.prendaAgregadaCarrito, "PRENDA_AGREGADA_CARRITO")
+        pub.suscribe(self.prendaEliminadaCarrito, "PRENDA_ELIMINADA_CARRITO")
+        pub.suscribe(self.carritoVaciado, "CARRITO_VACIADO")
 
-    #metodos de la pestania prendas
+
+
+
+    #metodos de la pestania prendas----------------------------------------------
     def mostrarDetallePrenda(self):
 
         seleccionado = self.main_window.lista_prendas.getFocusedItem()
@@ -188,7 +214,7 @@ class AppController:
 
 
     
-    #metodos de la pestania clientes
+    #metodos de la pestania clientes---------------------------------------------
 
     def mostrarDetalleCliente(self):
 
@@ -238,7 +264,7 @@ class AppController:
         self.cargarListaClientes(lista_a_cargar)
 
 
-    #metodos de suscripcion a eventos
+    #metodos de suscripcion a eventos--------------------------------------------
     def actualizarCliente(self, message):
         #este metodo debe actualizar en la lista clientes el cliente
         #debe buscarlo en la tabla y modificarlo, no olvidar que ademas
@@ -274,6 +300,101 @@ class AppController:
 
     def actualizadaConfiguracionClientes(self, message):
         #debe recargar la lista de clientes, con la nueva configuracion
+
+    def prendaAgregadaCarrito(self, message):
+        #este metodo debe cambiar el color de la prenda agregada
+
+    def prendaEliminadaCarrito(self, message):
+        #este metodo debe cambiar el color de la prenda eliminada
+
+    def carritoVaciado(self, message):
+        #este metodo debe recargar las prendas activas
+
+    #metodos barra menu------------------------------------------------------------
+
+    def realizarBackup(self):
+        #este metodo realiza el backup (copiar sgpd)
+        pass
+
+    def restaurarBackup(self):
+        #este metodo restaura el backup (copiar sgpd)
+        pass
+
+    def verDisponibles(self):
+        self.main_window.configuracion.setMostrarDisponibes(self.ver_disponibles.IsChecked())        
+
+    def verCondicionales(self):
+        self.main_window.configuracion.setMostrarCondicionales(self.ver_condicionales.IsChecked())
+
+    def verVendidas(self):
+        self.main_window.configuracion.setMostrarVendidas(self.ver_vendidas.IsChecked())
+
+    def verAlDia(self):
+        self.main_window.configuracion.setMostrarAlDia(self.ver_al_dia.IsChecked())
+
+    def verTardios(self):
+        self.main_window.configuracion.setMostrarTardios(self.ver_tardios.IsChecked())
+
+    def verMorosos(self):
+        self.main_window.configuracion.setMostrarMorosos(self.ver_morosos.IsChecked())    
+    
+    def vaciarCarrito(self):
+        self.carrito.vaciarCarrito()
+
+    def borrarTodo(self):
+        #este metodo debe borrar el archivo con los objetos serializados
+        pass
+
+    def listaCorreos(self):
+        correos = ''
+
+        for cliente in clientes.getClientes():
+            correos = correos + cliente.getEmail() + ';'
+
+        #se debe instanciar la ventana que contenga la lista
+
+    def listaCorreosMorosos(self):
+        correos = ''
+
+        for cliente in clientes.getClientesMorosos():
+            correos = correos + cliente.getEmail() + ';'
+
+        #se debe instanciar la ventana que contenga la lista
+
+    def listaTelefonos(self):
+
+        datosNecesarios = {'dni': '', 'nombre': '', 'tel': ''}
+        lista_telefonos_clientes = []
+
+        for cliente in clientes.getClientes():
+            datosNecesarios['dni'] = cliente.getDni()
+            datosNecesarios['nombre'] = cliente.getNombre()
+            datosNecesarios['tel'] = cliente.getTel()
+            lista_telefonos_clientes.append(datosNecesarios)
+
+        #se debe instanciar la ventana que contenga los telefonos
+
+    def listaTelefonosMorosos(self):
+        
+        datosNecesarios = {'dni': '', 'nombre': '', 'tel': ''}
+        lista_telefonos_clientes = []
+
+        for cliente in clientes.getClientesMorosos():
+            datosNecesarios['dni'] = cliente.getDni()
+            datosNecesarios['nombre'] = cliente.getNombre()
+            datosNecesarios['tel'] = cliente.getTel()
+            lista_telefonos_clientes.append(datosNecesarios)
+
+        #se debe instanciar la ventana que contenga los telefonos        
+
+    def listaCumpleaniosMes(self):
+        #este metodo muestra los cumpleanios del mes
+        pass
+
+    def informeTotales(self):
+        #este metodo muestra el informe de los totales
+        pass
+
 
 if __name__=='__main__':
     
