@@ -42,18 +42,71 @@ class AppController:
         lista_clientes.InsertColumn(0, "DNI", width=100)
         lista_clientes.InsertColumn(1, "Nombre", width=300)
         lista_clientes.InsertColumn(2, "Telefono", width=200)
-        lista_clientes.InsertColumn(3, "Saldo")
+        lista_clientes.InsertColumn(3, "Saldo")# lista_clientes 
 
-    def agregarClienteALista(self, item):
-        
+
+        # lista_prendas
+        lista_prendas= self.main_window.lista_prendas
+
+        # Agregar columnas a lista_clientes
+        lista_prendas.InsertColumn(0, "Codigo", width=100)
+        lista_prendas.InsertColumn(1, "Nombre", width=300)
+        lista_prendas.InsertColumn(2, "Precio", width=200)
+
+
+    def agregarClienteALista(self, item, indx=-1):
+
         # Agregar items a lista_clientes
-        for item in self.clientes.getClientes():
+        idx = lista_clientes.GetItemCount()
+        lista_clientes.InsertStringItem(idx, "%s" % item.getDni()) 
+        lista_clientes.SetStringItem(idx, 1, "%s" % item.getNombre()) 
+        lista_clientes.SetStringItem(idx, 2, "%s" % item.getTelefono()) 
+        lista_clientes.SetStringItem(idx, 3, "%s" % item.getSaldo()) 
 
-            idx = lista_clientes.GetItemCount()
-            lista_clientes.InsertStringItem(idx, "%s" % item.getDni()) 
-            lista_clientes.SetStringItem(idx, 1, "%s" % item.getNombre()) 
-            lista_clientes.SetStringItem(idx, 2, "%s" % item.getTelefono()) 
-            lista_clientes.SetStringItem(idx, 3, "%s" % item.getSaldo()) 
+        if item.getEstado() == 'moroso':
+            lista_clientes.SetItemBAckgroundColor(idx, "red")
+
+        if item.getEstado() == 'tardio':
+            lista_clientes.SetItemBAckgroundColor(idx, "yellow")
+
+
+    def agregarPrendaALista(self, item, indx=-1):
+        
+        # Agregar items a lista_prendas
+        idx = lista_prendas.GetItemCount()
+        lista_prendas.InsertStringItem(idx, "%s" % item.getCodigo()) 
+        lista_prendas.SetStringItem(idx, 1, "%s" % item.getNombre()) 
+        lista_prendas.SetStringItem(idx, 2, "%s" % item.getPrecio()) 
+
+        if item.getEstado() == 'vendida':
+            lista_prendas.SetItemBAckgroundColor(idx, "red")
+
+        if item.getEstado() == 'condicional':
+            lista_prendas.SetItemBAckgroundColor(idx, "yellow")
+
+
+    def agregarClientesActivos(self, clientes=[]):
+
+        if len(clientes) > 0:
+            cl = clientes
+        else:
+            cl = self.clientes.getClientesActivos(self.configuracion)
+
+        for c in cl:
+            self.agregarClienteALista(c)
+
+
+    def agregarPrendasActivas(self, prendas=[]):
+
+        if len(prendas) > 0:
+            pr = prendas
+        else:
+            pr = self.prendas.getPrendasActivas(self.configuracion)
+
+        for p in pr:
+            self.agregarClienteALista(p)
+
+
 	
 
     def connectEvent(self):
@@ -85,7 +138,7 @@ class AppController:
         self.main_window.Bind(wx.EVT_MENU, self.restaurarBackup, self.main_window.restaurar_backup)
         self.main_window.Bind(wx.EVT_MENU, self.verDisponibles), self.main_window.ver_disponibles 
         self.main_window.Bind(wx.EVT_MENU, self.verCondicionales, self.main_window.ver_condicionales)
-        self.main_window.Bind(wx.EVT_MENU, self.verVendidas, self.main_window.ver_vendidas)
+        self.main_window.Bind(wx.EVT_MENU, self.verVendidas, self.MainFrame_window.ver_vendidas)
         self.main_window.Bind(wx.EVT_MENU, self.verAlDia, self.main_window.ver_al_dia)
         self.main_window.Bind(wx.EVT_MENU, self.verTardios, self.main_window.ver_tardios)
         self.main_window.Bind(wx.EVT_MENU, self.verMorosos, self.main_window.ver_morosos)
@@ -339,22 +392,22 @@ class AppController:
         pass
     
     def verDisponibles(self):
-        self.main_window.configuracion.setMostrarDisponibes(self.ver_disponibles.IsChecked())        
+        self.configuracion.setMostrarDisponibes(self.ver_disponibles.IsChecked())        
 
     def verCondicionales(self):
-        self.main_window.configuracion.setMostrarCondicionales(self.ver_condicionales.IsChecked())
+        self.configuracion.setMostrarCondicionales(self.ver_condicionales.IsChecked())
 
     def verVendidas(self):
-        self.main_window.configuracion.setMostrarVendidas(self.ver_vendidas.IsChecked())
+        self.configuracion.setMostrarVendidas(self.ver_vendidas.IsChecked())
 
     def verAlDia(self):
-        self.main_window.configuracion.setMostrarAlDia(self.ver_al_dia.IsChecked())
+        self.configuracion.setMostrarAlDia(self.ver_al_dia.IsChecked())
 
     def verTardios(self):
-        self.main_window.configuracion.setMostrarTardios(self.ver_tardios.IsChecked())
+        self.configuracion.setMostrarTardios(self.ver_tardios.IsChecked())
 
     def verMorosos(self):
-        self.main_window.configuracion.setMostrarMorosos(self.ver_morosos.IsChecked())    
+        self.configuracion.setMostrarMorosos(self.ver_morosos.IsChecked())    
     
     def vaciarCarrito(self):
         self.carrito.vaciarCarrito()
