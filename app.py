@@ -190,7 +190,16 @@ class DetalleClienteController:
         for item in self.cliente.getMovimientos():
 
             idx = list_resumen_cliente.GetItemCount()
-            list_resumen_cliente.InsertStringItem(idx, "%s" % item.compra.fecha 
+            if isinstance(item, Compra):
+                list_resumen_cliente.InsertStringItem(idx, "%s" % item.movimiento.fecha)
+                list_resumen_cliente.SetStringItem(idx, 1, "Compra" 
+                list_resumen_cliente.SetStringItem(idx, 2, "%s" % item.Prenda.getCodigo) 
+                list_resumen_cliente.SetStringItem(idx, 3, "%s" % item.getSaldo())                
+            elif isinstance(movimiento, Pago):
+                cliente_casual.addPago(movimiento)
+
+
+            list_resumen_cliente.InsertStringItem(idx, "%s") #/%s/%s" % (datetime.date.today().day, datetime.date.today().month, datetime.date.today().year)
             list_resumen_cliente.SetStringItem(idx, 1, "%s" % item.getNombre()) 
             list_resumen_cliente.SetStringItem(idx, 2, "%s" % item.getTelefono()) 
             list_resumen_cliente.SetStringItem(idx, 3, "%s" % item.getSaldo()) 
