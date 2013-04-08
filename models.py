@@ -212,7 +212,7 @@ class Cliente:
         if (self._fecha_nacimiento.month == datetime.date.today().month):
             return True
         else: 
-            return: False
+            return False
 
 class Prenda:
     """
@@ -403,7 +403,7 @@ class ListaPrendas:
 
     def deletePrenda(self, prenda):
 
-        if prenda.getEstado() = 'disponible':
+        if prenda.getEstado() == 'disponible':
             self._prendas.remove(prenda)
             pub.sendMessage("PRENDA_ELIMINADA", self)
         else:
@@ -470,7 +470,7 @@ class Carrito:
 
         #agrega o quita una prenda al carrito, siempre y cuando este disponible
         
-        if prenda.getEstado() = 'disponible':
+        if prenda.getEstado() == 'disponible':
             try:
                 self._prendas.remove(prenda)
                 pub.sendMessage("PRENDA_ELIMINADA_CARRITO", self)          
@@ -536,4 +536,4 @@ class Configuracion:
 
 #Creacion del cliente casual, al que se le asignan ventas casuales.
 
-cliente_casual = Cliente("0", 'cliente_casual', '', '')
+cliente_casual = Cliente("0", 'cliente_casual', '', '', '')

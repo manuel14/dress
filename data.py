@@ -1,6 +1,6 @@
 import cPickle as pickle
 from os.path import exists
-from models import ListaPrendas, ListaClientes
+from models import ListaPrendas, ListaClientes, Configuracion
 
 DATA_FILE = 'dress.dat'
 
