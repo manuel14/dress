@@ -44,8 +44,6 @@ class MainFrame(wx.Frame):
         wxglade_tmp_menu = wx.Menu()
         self.vaciar_carrito = wx.MenuItem(wxglade_tmp_menu, wx.NewId(), "Vaciar Carrito", "", wx.ITEM_NORMAL)
         wxglade_tmp_menu.AppendItem(self.vaciar_carrito)
-        self.borrar_todo = wx.MenuItem(wxglade_tmp_menu, wx.NewId(), "Borrar todo ", "", wx.ITEM_NORMAL)
-        wxglade_tmp_menu.AppendItem(self.borrar_todo)
         self.frame_menubar.Append(wxglade_tmp_menu, "Herramientas")
         wxglade_tmp_menu = wx.Menu()
         self.informe_lista_correos = wx.MenuItem(wxglade_tmp_menu, wx.NewId(), "Lista de correos", "", wx.ITEM_NORMAL)

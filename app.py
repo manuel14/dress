@@ -90,7 +90,6 @@ class AppController:
         self.main_window.Bind(wx.EVT_MENU, self.verTardios, self.main_window.ver_tardios)
         self.main_window.Bind(wx.EVT_MENU, self.verMorosos, self.main_window.ver_morosos)
         self.main_window.Bind(wx.EVT_MENU, self.vaciarCarrito, self.main_window.vaciar_carrito)
-        self.main_window.Bind(wx.EVT_MENU, self.borrarTodo, self.main_window.borrar_todo)
         self.main_window.Bind(wx.EVT_MENU, self.listaCorreos, self.main_window.informe_lista_correos)
         self.main_window.Bind(wx.EVT_MENU, self.listaCorreosMorosos, self.main_window.informe_lista_correos_morosos)
         self.main_window.Bind(wx.EVT_MENU, self.listaTelefonos, self.main_window.informe_lista_telefonos)
@@ -99,14 +98,14 @@ class AppController:
         self.main_window.Bind(wx.EVT_MENU, self.informeTotales, self.main_window.informe_totales)
         
         #suscripcion a eventos de Cliente
-        pub.subscribe(self.actualizarCliente, "CAMBIO_CLIENTE")
-        pub.subscribe(self.actualizarCliente, "COMPRA_AGREGADA")
-        pub.subscribe(self.actualizarCliente, "PAGO_AGREGADO")
-        pub.subscribe(self.actualizarCliente, "COMPRA_ELIMINADA")
-        pub.subscribe(self.actualizarCliente, "PAGO_ELIMINADO")
+        pub.subscribe(self.clienteActualizado, "CAMBIO_CLIENTE")
+        pub.subscribe(self.clienteActualizado, "COMPRA_AGREGADA")
+        pub.subscribe(self.clienteActualizado, "PAGO_AGREGADO")
+        pub.subscribe(self.clienteActualizado, "COMPRA_ELIMINADA")
+        pub.subscribe(self.clienteActualizado, "PAGO_ELIMINADO")
 
         #suscripcion a eventos de Prenda
-        pub.subscribe(self.actualizarPrenda, "CAMBIO_PRENDA")
+        pub.subscribe(self.prendaActualizada, "CAMBIO_PRENDA")
 
         #suscripcion a eventos de ListaClientes
         pub.subscribe(self.clienteAgregado, "CLIENTE_AGREGADO")
@@ -212,7 +211,7 @@ class AppController:
             for prenda in prenda_buscada:
                 lista_a_cargar.addPrenda(prenda)
 
-        self.cargarListaPrendas(lista_a_cargar)
+        self.agregarPrendasActivas(lista_a_cargar)
 
 
     
@@ -265,47 +264,58 @@ class AppController:
             for cliente in cliente_buscado:
                 lista_a_cargar.addCliente(cliente)
 
-        self.cargarListaClientes(lista_a_cargar)
+        self.agregarClientesActivos(lista_a_cargar)
 
 
     #metodos de suscripcion a eventos--------------------------------------------
-    def actualizarCliente(self, message):
-        #este metodo debe actualizar en la lista clientes el cliente
-        #debe buscarlo en la tabla y modificarlo, no olvidar que ademas
-        #de modificar los datos se debe modificar su estado (color)
-        pass
+    def clienteActualizado(self, message):
 
-    def actualizarPrenda(self, message):
-        #este metodo debe actualizar en la lista prendas la prenda
-        #debe buscarla en la tabla y modificarla, no olvidar que ademas
-        #de modificar los datos se debe modificar su estado (color)
-        pass
+        for idx in range(self.main_window.lista_clientes.GetItemCount()): 
+            item = self.main_window.lista_clientes.GetItem(idx, 0) 
+            if item.GetText() == message.data.getDni():
+                self.main_window.lista_clientes.DeleteItem(item)
+                self.agregarClienteALista(message.data, idx)
+                break
+
+    def prendaActualizada(self, message):
+    
+        for idx in range(self.main_window.lista_prendas.GetItemCount()): 
+            item = self.main_window.lista_prendas.GetItem(idx, 0) 
+            if item.GetText() == message.data.getDni():
+                self.main_window.lista_prendas.DeleteItem(item)
+                self.agregarPrendaALista(message.data, idx)
+                break
 
     def clienteAgregado(self, message):
-        #este metodo debe agregar el cliente, posiblemente use el mismo 
-        #que se utiliza para cargar los elemenotos a la lista
-        pass
+
+        self.agregarClienteALista(message.data)
 
     def clienteEliminado(self, message):
-        #este metodo debe eliminar el cliente de la lista
-        pass
+    
+        for idx in range(self.main_window.lista_clientes.GetItemCount()): 
+            item = self.main_window.lista_clientes.GetItem(idx, 0) 
+            if item.GetText() == message.data.getDni():
+                self.main_window.lista_clientes.DeleteItem(item)
+                break
 
     def prendaAgregada(self, message):
-        #este metodo debe agregar la prenda, posiblemente use el mismo 
-        #que se utiliza para cargar los elemenotos a la lista
-        pass
+        
+        self.agregarPrendaALista(message.data)
 
     def prendaEliminada(self, message):
-        #este metodo debe eliminar la prenda de la lista
-        pass
+    
+    for idx in range(self.main_window.lista_prendas.GetItemCount()): 
+        item = self.main_window.lista_prendas.GetItem(idx, 0) 
+        if item.GetText() == message.data.getDni():
+            self.main_window.lista_prendas.DeleteItem(item)
+            break
+
 
     def actualizadaConfiguracionPrendas(self, message):
-        #debe recargar la lista de prendas, con la nueva configuracion
-        pass
+        self.agregarPrendasActivas()
 
     def actualizadaConfiguracionClientes(self, message):
-        #debe recargar la lista de clientes, con la nueva configuracion
-        pass
+        self.agregarClientesActivos()
 
     def prendaAgregadaCarrito(self, message):
         #este metodo debe cambiar el color de la prenda agregada
@@ -316,8 +326,7 @@ class AppController:
         pass
 
     def carritoVaciado(self, message):
-        #este metodo debe recargar las prendas activas
-        pass
+        self.agregarPrendasActivas()
 
     #metodos barra menu------------------------------------------------------------
 
@@ -358,10 +367,6 @@ class AppController:
     
     def vaciarCarrito(self):
         self.carrito.vaciarCarrito()
-
-    def borrarTodo(self):
-        #este metodo debe borrar el archivo con los objetos serializados
-        pass
 
     def listaCorreos(self):
         correos = ''
