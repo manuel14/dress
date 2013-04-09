@@ -357,11 +357,11 @@ class AppController:
 
     def prendaEliminada(self, message):
     
-    for idx in range(self.main_window.lista_prendas.GetItemCount()): 
-        item = self.main_window.lista_prendas.GetItem(idx, 0) 
-        if item.GetText() == message.data.getDni():
-            self.main_window.lista_prendas.DeleteItem(item)
-            break
+        for idx in range(self.main_window.lista_prendas.GetItemCount()): 
+            item = self.main_window.lista_prendas.GetItem(idx, 0) 
+            if item.GetText() == message.data.getDni():
+                self.main_window.lista_prendas.DeleteItem(item)
+                break
 
 
     def actualizadaConfiguracionPrendas(self, message):
