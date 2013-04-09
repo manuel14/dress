@@ -21,6 +21,12 @@ class AppController:
         self.clientes = self.data.objects["clientes"]
         self.compras = self.data.objects["prendas"]
         self.carrito = Carrito()
+<<<<<<< HEAD
+=======
+
+        self.configuracion = self.data.objects["configuracion"]
+
+>>>>>>> 4f3ba883e2a253fca060924d617e0c44ab379c3c
 
     	self.main_window = MainFrame(None, -1, "A&M Moda")
 
@@ -35,6 +41,7 @@ class AppController:
         # =============================================================
 
         # lista_clientes	
+<<<<<<< HEAD
         lista_clientes = self.main_window.lista_clientes
 
         # Agregar columnas a lista_clientes
@@ -51,25 +58,104 @@ class AppController:
             lista_clientes.SetStringItem(idx, 1, "%s" % item.getNombre()) 
             lista_clientes.SetStringItem(idx, 2, "%s" % item.getTelefono()) 
             lista_clientes.SetStringItem(idx, 3, "%s" % item.getSaldo()) 
+=======
+    	lista_clientes = self.main_window.lista_clientes
+
+    	# Agregar columnas a lista_clientes
+    	lista_clientes.InsertColumn(0, "DNI", width=100)
+    	lista_clientes.InsertColumn(1, "Nombre", width=300)
+    	lista_clientes.InsertColumn(2, "Telefono", width=200)
+    	lista_clientes.InsertColumn(3, "Saldo")
+
+
+	   # Agregar items a lista_clientes
+    	for item in self.clientes.getClientes():
+
+    	    idx = lista_clientes.GetItemCount()
+    	    lista_clientes.InsertStringItem(idx, "%s" % item.getDni()) 
+    	    lista_clientes.SetStringItem(idx, 1, "%s" % item.getNombre()) 
+    	    lista_clientes.SetStringItem(idx, 2, "%s" % item.getTelefono()) 
+    	    lista_clientes.SetStringItem(idx, 3, "%s" % item.getSaldo()) 
+
+>>>>>>> 4f3ba883e2a253fca060924d617e0c44ab379c3c
 	
 
     def connectEvent(self):
         
-        # pestania prendas
+        #vinculacion pestania prendas eventos
         self.main_window.boton_detalle_prendas.Bind(wx.EVT_BUTTON, self.mostrarDetallePrenda)
         self.main_window.boton_eliminar_prendas.Bind(wx.EVT_BUTTON, self.eliminarPrenda)
         self.main_window.boton_nuevo_prendas.Bind(wx.EVT_BUTTON, self.nuevaPrenda)
-        self.main_window.boton_agregar_quitar(wx.EVT_BUTTON, self.agregarQuitarCarrito)
-        self.main_window.boton_realizar_venta(wx.EVT_BUTTON, self.realizarVenta)
+        self.main_window.boton_agregar_quitar.Bind(wx.EVT_BUTTON, self.agregarQuitarCarrito)
+        self.main_window.boton_realizar_venta.Bind(wx.EVT_BUTTON, self.realizarVenta)
 
-        #pestania clientes
+        self.main_window.texto_buscar_prendas.Bind(wx.EVT_SET_FOCUS, self.onSetFocusBuscarPrendas)
+        self.main_window.texto_buscar_prendas.Bind(wx.KILL_FOCUS, self.onKillFocusBuscarPrendas)
+        self.main_window.texto_buscar_prendas.Bind(wx.EVT_TEXT_ENTER, self.buscarPrendas)
+
+
+        #viculacion pestania clientes eventos
         self.main_window.boton_detalle_clientes.Bind(wx.EVT_BUTTON, self.mostrarDetalleCliente)
         self.main_window.boton_eliminar_clientes.Bind(wx.EVT_BUTTON, self.eliminarCliente)
         self.main_window.boton_nuevo_clientes.Bind(wx.EVT_BUTTON, self.nuevoCliente)
 
+        self.main_window.texto_buscar_clientes.Bind(wx.EVT_SET_FOCUS, self.onSetFocusBuscarClientes)
+        self.main_window.texto_buscar_clientes.Bind(wx.KILL_FOCUS, self.onKillFocusBuscarClientes)
+        self.main_window.texto_buscar_prendas.Bind(wx.EVT_TEXT_ENTER, self.buscarClientes)
+
+        #vinculacion eventos menu
+
+        self.main_window.realizar_backup.Bind(wx.EVT_MENU, self.realizarBackup)
+        self.main_window.restaurar_backup.Bind(wx.EVT_MENU, self.restaurarBackup) 
+        self.main_window.ver_disponibles.Bind(wx.EVT_MENU, self.verDisponibles) 
+        self.main_window.ver_condicionales.Bind(wx.EVT_MENU, self.verCondicionales) 
+        self.main_window.ver_vendidas.Bind(wx.EVT_MENU, self.verVendidas)
+        self.main_window.ver_al_dia.Bind(wx.EVT_MENU, self.verAlDia) 
+        self.main_window.ver_tardios.Bind(wx.EVT_MENU, self.verTardios) 
+        self.main_window.ver_morosos.Bind(wx.EVT_MENU, self.verMorosos) 
+        self.main_window.vaciar_carrito.Bind(wx.EVT_MENU, self.vaciarCarrito)
+        self.main_window.borrar_todo.Bind(wx.EVT_MENU, self.borrarTodo) 
+        self.main_window.informe_lista_correos.Bind(wx.EVT_MENU, self.listaCorreos)
+        self.main_window.informe_lista_correos_morosos.Bind(wx.EVT_MENU, self.listaCorreosMorosos) 
+        self.main_window.informe_lista_telefonos.Bind(wx.EVT_MENU, self.listaTelefonos) 
+        self.main_window.informe_lista_telefonos_morosos.Bind(wx.EVT_MENU, self.listaTelefonosMorosos)
+        self.main_window.informe_lista_cumpleanios_mes.Bind(wx.EVT_MENU, self.listaCumpleaniosMes)
+        self.main_window.informe_totales.Bind(wx.EVT_MENU, self.informeTotales)
+        
+        #suscripcion a eventos de Cliente
+        pub.subscribe(self.actualizarCliente, "CAMBIO_CLIENTE")
+        pub.subscribe(self.actualizarCliente, "COMPRA_AGREGADA")
+        pub.subscribe(self.actualizarCliente, "PAGO_AGREGADO")
+        pub.subscribe(self.actualizarCliente, "COMPRA_ELIMINADA")
+        pub.subscribe(self.actualizarCliente, "PAGO_ELIMINADO")
+
+        #suscripcion a eventos de Prenda
+        pub.subscribe(self.actualizarPrenda, "CAMBIO_PRENDA")
+
+        #suscripcion a eventos de ListaClientes
+        pub.subscribe(self.clienteAgregado, "CLIENTE_AGREGADO")
+        pub.suscribe(self.clienteEliminado, "CLIENTE_ELIMINADO")
+
+        #suscripcion a eventos de ListaPrendas
+        pub.suscribe(self.prendaAgregada, "PRENDA_AGREGADA")
+        pub.suscribe(self.prendaEliminada, "PRENDA_ELIMINADA")
+
+        #suscripcion a eventos de Configuracion
+        pub.suscribe(self.actualizadaConfiguracionPrendas, "CONFIGURACION_PRENDAS_CAMBIO")
+        pub.suscribe(self.actualizadaConfiguracionclientes, "CONFIGURACION_CLIENTES_CAMBIO")
+
+        #suscripcion a eventos carrito
+        pub.suscribe(self.prendaAgregadaCarrito, "PRENDA_AGREGADA_CARRITO")
+        pub.suscribe(self.prendaEliminadaCarrito, "PRENDA_ELIMINADA_CARRITO")
+        pub.suscribe(self.carritoVaciado, "CARRITO_VACIADO")
 
 
 
+<<<<<<< HEAD
+=======
+
+    #metodos de la pestania prendas----------------------------------------------
+>>>>>>> 4f3ba883e2a253fca060924d617e0c44ab379c3c
     def mostrarDetallePrenda(self):
 
         seleccionado = self.main_window.lista_prendas.getFocusedItem()
@@ -77,7 +163,7 @@ class AppController:
         if seleccionado != -1:
             codigo_prenda = self.main_window.lista_prendas.getItem(seleccionado,0)
             prenda = self.prendas.getPrendaPorCodigo(int(codigo_prenda))
-            controlador_detalle_prenda = DetallePrendaController(prenda)
+            controlador_detalle_prenda = DetallePrendaController(prenda, self.main_window)
 
     def eliminarPrenda(self):
 
@@ -99,8 +185,8 @@ class AppController:
 
     def nuevaPrenda(self):
 
-        #recibe self para poder agregar la prenda a la lista prendas
-        controlador_nueva_prenda = NuevaPrendaController(self)
+        #recibe self para poder agregar la prenda a la lista prendas. Self.main_window es la ventana padre
+        controlador_nueva_prenda = NuevaPrendaController(self, self.main_window)
 
     def agregarQuitarCarrito(self):
         
@@ -109,17 +195,52 @@ class AppController:
         if seleccionado != -1:
             codigo_prenda = self.main_window.lista_prendas.getItem(seleccionado,0)
             prenda = self.prendas.getPrendaPorCodigo(int(codigo_prenda))
-
-        carrito.addOrDeletePrenda(prenda)
+            
+            try:
+                carrito.addOrDeletePrenda(prenda)
+            except NameError:
+                error_dialog = wx.MessageDialog(self, "No puede vender una prenda vendida o en condicional", "Advertencia", wx.ICON_INFORMATION)
+                error_dialog.ShowModal()
+                error_dialog.Destroy()
+                self.Close()
 
     def realizarVenta(self):
-        if self.carrito.length() != 0:
-            controlador_venta = Venta_Controller(self.carrito)
+        if self.carrito.getPrendas().length() != 0:
+            controlador_venta = Venta_Controller(self.carrito, self.main_window)
         else:
             error_dialog = wx.MessageDialog(self, "Seleccione al menos una prenda para vender", "Advertencia", wx.ICON_INFORMATION)
             error_dialog.ShowModal()
             error_dialog.Destroy()
             self.Close()
+
+    def onSetFocusBuscarPrendas(self):
+        self.main_window.texto_buscar_prendas.Clear()
+
+    def onKillFocusBuscarPrendas(self):
+        self.main_window.texto_buscar_prendas.SetValue('Buscar...')
+
+    def buscarPrendas(self):
+        seleccionado = self.main_window.radio_box_prendas.GetSelection()
+        prendas_activas = self.prendas.getPrendasActivas(self.configuracion)
+        value = self.main_window.texto_buscar_prendas.GetValue()
+        lista_a_cargar = ListaPrendas()
+
+        if seleccionado == 0:
+            prenda_buscada = prendas_activas.getPrendaPorCodigo(value)
+            #como solo devuelve un elemnto lo agrego a la lista
+            lista_a_cargar.addPrenda(prenda_buscada)
+
+        elif seleccionado == 1:
+            prenda_buscada = prendas_activas.findPrendaPorNombre(value)
+            #como devuelve mas de un elemento los agrego con un for
+            for prenda in prenda_buscada:
+                lista_a_cargar.addPrenda(prenda)
+
+        self.cargarListaPrendas(lista_a_cargar)
+
+
+    
+    #metodos de la pestania clientes---------------------------------------------
 
     def mostrarDetalleCliente(self):
 
@@ -128,7 +249,7 @@ class AppController:
         if seleccionado != -1:
             dni = self.main_window.lista_clientes.getItem(seleccionado,0)
             cliente = self.clientes.getClientePorDni(dni)
-            controlador_detalle_cliente = DetalleClienteController(cliente)        
+            controlador_detalle_cliente = DetalleClienteController(cliente, self.main_window)        
 
     def eliminarCliente(self):
 
@@ -138,14 +259,167 @@ class AppController:
             dni = self.main_window.lista_clientes.getItem(seleccionado,0)
             cliente = self.clientes.getClientePorDni(dni)
             self.clientes.deleteCliente(cliente)
-            
-
-
+    
     def nuevoCliente(self):
         #recibe self para poder agregar la prenda a la lista clientes
-        controlador_nuevo_cliente = NuevoClienteController(self)
+        controlador_nuevo_cliente = NuevoClienteController(self, self.main_window)
+
+    def onSetFocusBuscarClientes(self):
+        self.main_window.texto_buscar_clientes.Clear()
+
+    def onKillFocusBuscarClientes(self):
+        self.main_window.texto_buscar_clientes.SetValue('Buscar...')
+
+    def buscarClientes(self):
+        seleccionado = self.main_window.radio_box_clientes.GetSelection()
+        clientes_activos = self.clientes.getClientesActivos(self.configuracion)
+        value = self.main_window.texto_buscar_clientes.GetValue()
+        lista_a_cargar = ListaClientes()
+
+        if seleccionado == 0:
+            cliente_buscado = clientes_activos.getClientePorDni(value)
+            #como solo devuelve un elemnto lo agrego a la lista
+            lista_a_cargar.addCliente(cliente_buscado)
+
+        elif seleccionado == 1:
+            cliente_buscado = clientes_activos.findClientePorNombre(value)
+            #como devuelve mas de un elemento los agrego con un for
+            for cliente in cliente_buscado:
+                lista_a_cargar.addCliente(cliente)
+
+        self.cargarListaClientes(lista_a_cargar)
 
 
+    #metodos de suscripcion a eventos--------------------------------------------
+    def actualizarCliente(self, message):
+        #este metodo debe actualizar en la lista clientes el cliente
+        #debe buscarlo en la tabla y modificarlo, no olvidar que ademas
+        #de modificar los datos se debe modificar su estado (color)
+        pass
+
+    def actualizarPrenda(self,message):
+        #este metodo debe actualizar en la lista prendas la prenda
+        #debe buscarla en la tabla y modificarla, no olvidar que ademas
+        #de modificar los datos se debe modificar su estado (color)
+        pass
+
+    def clienteAgregado(self, message):
+        #este metodo debe agregar el cliente, posiblemente use el mismo 
+        #que se utiliza para cargar los elemenotos a la lista
+        pass
+
+    def clienteEliminado(self, message):
+        #este metodo debe eliminar el cliente de la lista
+        pass
+
+    def prendaAgregada(self, message):
+        #este metodo debe agregar la prenda, posiblemente use el mismo 
+        #que se utiliza para cargar los elemenotos a la lista
+        pass
+
+    def prendaEliminada(self, message):
+        #este metodo debe eliminar la prenda de la lista
+        pass
+
+    def actualizadaConfiguracionPrendas(self, message):
+        #debe recargar la lista de prendas, con la nueva configuracion
+
+    def actualizadaConfiguracionClientes(self, message):
+        #debe recargar la lista de clientes, con la nueva configuracion
+
+    def prendaAgregadaCarrito(self, message):
+        #este metodo debe cambiar el color de la prenda agregada
+
+    def prendaEliminadaCarrito(self, message):
+        #este metodo debe cambiar el color de la prenda eliminada
+
+    def carritoVaciado(self, message):
+        #este metodo debe recargar las prendas activas
+
+    #metodos barra menu------------------------------------------------------------
+
+    def realizarBackup(self):
+        #este metodo realiza el backup (copiar sgpd)
+        pass
+
+    def restaurarBackup(self):
+        #este metodo restaura el backup (copiar sgpd)
+        pass
+
+    def verDisponibles(self):
+        self.main_window.configuracion.setMostrarDisponibes(self.ver_disponibles.IsChecked())        
+
+    def verCondicionales(self):
+        self.main_window.configuracion.setMostrarCondicionales(self.ver_condicionales.IsChecked())
+
+    def verVendidas(self):
+        self.main_window.configuracion.setMostrarVendidas(self.ver_vendidas.IsChecked())
+
+    def verAlDia(self):
+        self.main_window.configuracion.setMostrarAlDia(self.ver_al_dia.IsChecked())
+
+    def verTardios(self):
+        self.main_window.configuracion.setMostrarTardios(self.ver_tardios.IsChecked())
+
+    def verMorosos(self):
+        self.main_window.configuracion.setMostrarMorosos(self.ver_morosos.IsChecked())    
+    
+    def vaciarCarrito(self):
+        self.carrito.vaciarCarrito()
+
+    def borrarTodo(self):
+        #este metodo debe borrar el archivo con los objetos serializados
+        pass
+
+    def listaCorreos(self):
+        correos = ''
+
+        for cliente in clientes.getClientes():
+            correos = correos + cliente.getEmail() + ';'
+
+        #se debe instanciar la ventana que contenga la lista
+
+    def listaCorreosMorosos(self):
+        correos = ''
+
+        for cliente in clientes.getClientesMorosos():
+            correos = correos + cliente.getEmail() + ';'
+
+        #se debe instanciar la ventana que contenga la lista
+
+    def listaTelefonos(self):
+
+        datosNecesarios = {'dni': '', 'nombre': '', 'tel': ''}
+        lista_telefonos_clientes = []
+
+        for cliente in clientes.getClientes():
+            datosNecesarios['dni'] = cliente.getDni()
+            datosNecesarios['nombre'] = cliente.getNombre()
+            datosNecesarios['tel'] = cliente.getTel()
+            lista_telefonos_clientes.append(datosNecesarios)
+
+        #se debe instanciar la ventana que contenga los telefonos
+
+    def listaTelefonosMorosos(self):
+        
+        datosNecesarios = {'dni': '', 'nombre': '', 'tel': ''}
+        lista_telefonos_clientes = []
+
+        for cliente in clientes.getClientesMorosos():
+            datosNecesarios['dni'] = cliente.getDni()
+            datosNecesarios['nombre'] = cliente.getNombre()
+            datosNecesarios['tel'] = cliente.getTel()
+            lista_telefonos_clientes.append(datosNecesarios)
+
+        #se debe instanciar la ventana que contenga los telefonos        
+
+    def listaCumpleaniosMes(self):
+        #este metodo muestra los cumpleanios del mes
+        pass
+
+    def informeTotales(self):
+        #este metodo muestra el informe de los totales
+        pass
 
 
 if __name__=='__main__':
