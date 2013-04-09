@@ -138,7 +138,7 @@ class AppController:
         self.main_window.Bind(wx.EVT_MENU, self.restaurarBackup, self.main_window.restaurar_backup)
         self.main_window.Bind(wx.EVT_MENU, self.verDisponibles), self.main_window.ver_disponibles 
         self.main_window.Bind(wx.EVT_MENU, self.verCondicionales, self.main_window.ver_condicionales)
-        self.main_window.Bind(wx.EVT_MENU, self.verVendidas, self.MainFrame_window.ver_vendidas)
+        self.main_window.Bind(wx.EVT_MENU, self.verVendidas, self.main_window.ver_vendidas)
         self.main_window.Bind(wx.EVT_MENU, self.verAlDia, self.main_window.ver_al_dia)
         self.main_window.Bind(wx.EVT_MENU, self.verTardios, self.main_window.ver_tardios)
         self.main_window.Bind(wx.EVT_MENU, self.verMorosos, self.main_window.ver_morosos)
@@ -181,7 +181,7 @@ class AppController:
 
     #metodos de la pestania prendas----------------------------------------------
 
-    def mostrarDetallePrenda(self):
+    def mostrarDetallePrenda(self, event):
 
         seleccionado = self.main_window.lista_prendas.getFocusedItem()
         
@@ -190,7 +190,7 @@ class AppController:
             prenda = self.prendas.getPrendaPorCodigo(int(codigo_prenda))
             controlador_detalle_prenda = DetallePrendaController(prenda, self.main_window)
 
-    def eliminarPrenda(self):
+    def eliminarPrenda(self, event):
 
         seleccionado = self.main_window.lista_prendas.getFocusedItem()
 
@@ -208,12 +208,12 @@ class AppController:
 
 
 
-    def nuevaPrenda(self):
+    def nuevaPrenda(self, event):
 
         #recibe self para poder agregar la prenda a la lista prendas. Self.main_window es la ventana padre
         controlador_nueva_prenda = NuevaPrendaController(self, self.main_window)
 
-    def agregarQuitarCarrito(self):
+    def agregarQuitarCarrito(self, event):
         
         seleccionado = self.main_window.lista_prendas.getFocusedItem()
 
@@ -229,7 +229,7 @@ class AppController:
                 error_dialog.Destroy()
                 self.Close()
 
-    def realizarVenta(self):
+    def realizarVenta(self, event):
         if self.carrito.getPrendas().length() != 0:
             controlador_venta = Venta_Controller(self.carrito, self.main_window)
         else:
@@ -247,7 +247,7 @@ class AppController:
         if self.main_window.texto_buscar_prendas.GetValue() == '':
             self.main_window.texto_buscar_prendas.SetValue('Buscar...')
 
-    def buscarPrendas(self):
+    def buscarPrendas(self, event):
         seleccionado = self.main_window.radio_box_prendas.GetSelection()
         prendas_activas = self.prendas.getPrendasActivas(self.configuracion)
         value = self.main_window.texto_buscar_prendas.GetValue()
@@ -270,7 +270,7 @@ class AppController:
     
     #metodos de la pestania clientes---------------------------------------------
 
-    def mostrarDetalleCliente(self):
+    def mostrarDetalleCliente(self, event):
 
         seleccionado = self.main_window.lista_clientes.getFocusedItem()
         
@@ -279,7 +279,7 @@ class AppController:
             cliente = self.clientes.getClientePorDni(dni)
             controlador_detalle_cliente = DetalleClienteController(cliente, self.main_window)        
 
-    def eliminarCliente(self):
+    def eliminarCliente(self, event):
 
         seleccionado = self.main_window.lista_clientes.getFocusedItem()
         
@@ -288,7 +288,7 @@ class AppController:
             cliente = self.clientes.getClientePorDni(dni)
             self.clientes.deleteCliente(cliente)
     
-    def nuevoCliente(self):
+    def nuevoCliente(self, event):
         #recibe self para poder agregar la prenda a la lista clientes
         controlador_nuevo_cliente = NuevoClienteController(self, self.main_window)
 
@@ -300,7 +300,7 @@ class AppController:
         if self.main_window.texto_buscar_clientes.GetValue() == '':
             self.main_window.texto_buscar_clientes.SetValue('Buscar...')
 
-    def buscarClientes(self):
+    def buscarClientes(self, event):
         seleccionado = self.main_window.radio_box_clientes.GetSelection()
         clientes_activos = self.clientes.getClientesActivos(self.configuracion)
         value = self.main_window.texto_buscar_clientes.GetValue()
@@ -383,7 +383,7 @@ class AppController:
 
     #metodos barra menu------------------------------------------------------------
 
-    def realizarBackup(self):
+    def realizarBackup(self, event):
         
         # Abrir dialogo para seleccionar ruta de destino del archivo de backup
         file_dialog = wx.FileDialog(self, style = wx.SAVE)
@@ -396,32 +396,32 @@ class AppController:
                 msgbox = wx.MessageDialog(self, "Archivo de backup creado satisfactoriamente.", "INFO", style=wx.ICON_INFORMATION)
                 msgbox.ShowModal()
 
-    def restaurarBackup(self):
+    def restaurarBackup(self, event):
         #leo copia del sgpd vos que entendes tu codigo jaja
         pass
     
-    def verDisponibles(self):
+    def verDisponibles(self, event):
         self.configuracion.setMostrarDisponibes(self.ver_disponibles.IsChecked())        
 
-    def verCondicionales(self):
+    def verCondicionales(self, event):
         self.configuracion.setMostrarCondicionales(self.ver_condicionales.IsChecked())
 
-    def verVendidas(self):
+    def verVendidas(self, event):
         self.configuracion.setMostrarVendidas(self.ver_vendidas.IsChecked())
 
-    def verAlDia(self):
+    def verAlDia(self, event):
         self.configuracion.setMostrarAlDia(self.ver_al_dia.IsChecked())
 
-    def verTardios(self):
+    def verTardios(self, event):
         self.configuracion.setMostrarTardios(self.ver_tardios.IsChecked())
 
-    def verMorosos(self):
+    def verMorosos(self, event):
         self.configuracion.setMostrarMorosos(self.ver_morosos.IsChecked())    
     
-    def vaciarCarrito(self):
+    def vaciarCarrito(self, event):
         self.carrito.vaciarCarrito()
 
-    def listaCorreos(self):
+    def listaCorreos(self, event):
         correos = ''
 
         for cliente in clientes.getClientes():
@@ -429,7 +429,7 @@ class AppController:
 
         #se debe instanciar la ventana que contenga la lista
 
-    def listaCorreosMorosos(self):
+    def listaCorreosMorosos(self, event):
         correos = ''
 
         for cliente in clientes.getClientesMorosos():
@@ -437,7 +437,7 @@ class AppController:
 
         #se debe instanciar la ventana que contenga la lista
 
-    def listaTelefonos(self):
+    def listaTelefonos(self, event):
 
         datosNecesarios = {'dni': '', 'nombre': '', 'tel': ''}
         lista_telefonos_clientes = []
@@ -450,7 +450,7 @@ class AppController:
 
         #se debe instanciar la ventana que contenga los telefonos
 
-    def listaTelefonosMorosos(self):
+    def listaTelefonosMorosos(self, event):
         
         datosNecesarios = {'dni': '', 'nombre': '', 'tel': ''}
         lista_telefonos_clientes = []
@@ -463,7 +463,7 @@ class AppController:
 
         #se debe instanciar la ventana que contenga los telefonos        
 
-    def listaCumpleaniosMes(self):
+    def listaCumpleaniosMes(self, event):
         cumpleanieros = []
 
         for cliente in clientes.getClientes():
@@ -473,7 +473,7 @@ class AppController:
         #se debe instanciar la ventana que contenga los clientes    
 
 
-    def informeTotales(self):
+    def informeTotales(self, event):
         total_ganancias = 0
         total_deuda = 0
         total_capital_en_prendas = 0
