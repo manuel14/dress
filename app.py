@@ -518,6 +518,7 @@ class DetalleClienteController:
         self.cliente = cliente
         self.detalle_window = DetalleClienteFrame(padre, -1, "Detalle Cliente %s" %cliente.getNombre())
         self.initUi()
+        self.connectEvent()
 
         self.main_window.Show()
 
@@ -544,6 +545,27 @@ class DetalleClienteController:
         self.detalle_window.date_fecha_nacimiento.SetDate(cliente.getFechaNacimiento())
         self.detalle_window.texto_telefono.SetValue(self.cliente.getTelefono())
         self.detalle_window.texto_email.SetValue(self.cliente.getEmail)
+
+        #setear si el cliente debe o tiene credito
+        if self.cliente.getSaldo() < 0:
+            self.detalle_window.label_saldo.SetValue("Credito")
+
+    def connectEvent(self):
+
+        #botones
+        self.detalle_window.boton_eliminar_accion.Bind(wx.EVT_BUTTON, self.eliminarAccion)
+        self.detalle_window.boton_eliminar_condicional.Bind(wx.EVT_BUTTON, self.eliminarCondicionales)
+        self.detalle_window.boton_guardar.Bind(wx.EVT_BUTTON, self.guardar)
+        self.detalle_window.boton_cancelar.Bind(wx.EVT_BUTTON, self.cancelar)
+        self.detalle_window.boton_aceptar.Bind(wx.EVT_BUTTON, self.aceptar)
+
+        #labels
+        self.detalle_window.texto_paga_con.Bind(wx.EVT_TEXT_ENTER, self.calcularVuelto)
+
+        #suscripcion a eventos
+        self.pub.subscribe(accionEliminda, "COMPRA_ELIMINADA")
+        self.pub.suscribe(accionEliminada, "PAGO_ELIMINADO")
+        self.pub.suscribe(accionEliminada, "CONDICIONALES_ELIMINADOS")
     
     def agregarMovimientoALista(movimiento):
         idx = list_resumen_cliente.GetItemCount()
@@ -571,6 +593,8 @@ class DetalleClienteController:
 
         for mov in self.cliente.getMovimientos()
             self.agregarMovimientoALista(mov)
+
+    def metodo
 
 #fecha, tipo:va si es condi, compra o pago...., 
 #codigo prenda: el codigo pero si es pago no iene codi, 
