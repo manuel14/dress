@@ -212,6 +212,11 @@ class Cliente:
 
         return self._email
 
+    def getFechaNacimiento(self):
+
+        return self._fecha_nacimiento
+
+
     def cumpleAniosEsteMes(self):
 
         if (self._fecha_nacimiento.month == datetime.date.today().month):

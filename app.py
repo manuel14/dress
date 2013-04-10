@@ -427,7 +427,7 @@ class AppController:
         for cliente in clientes.getClientes():
             correos = correos + cliente.getEmail() + ';'
 
-        #se debe instanciar la ventana que contenga la lista
+        controlador_infome = InformeTextoController('E-mail Clientes', correos)
 
     def listaCorreosMorosos(self, event):
         correos = ''
@@ -435,42 +435,43 @@ class AppController:
         for cliente in clientes.getClientesMorosos():
             correos = correos + cliente.getEmail() + ';'
 
-        #se debe instanciar la ventana que contenga la lista
+        controlador_infome = InformeTextoController('E-mail Clientes Morosos', correos)
 
     def listaTelefonos(self, event):
 
-        datosNecesarios = {'dni': '', 'nombre': '', 'tel': ''}
-        lista_telefonos_clientes = []
+        columnas = ['DNI', 'Nombre', 'Telefono']
+        telefonos= []
 
         for cliente in clientes.getClientes():
-            datosNecesarios['dni'] = cliente.getDni()
-            datosNecesarios['nombre'] = cliente.getNombre()
-            datosNecesarios['tel'] = cliente.getTel()
-            lista_telefonos_clientes.append(datosNecesarios)
+            tupla_datos = (cliente.getDni(), cliente.getNombre(), cliente.getTelefono())
 
-        #se debe instanciar la ventana que contenga los telefonos
+            telefonos.append(tupla_datos)
+
+        controlador_infome = InformeListaController('Lista de Telefonos', columnas, telefonos)
 
     def listaTelefonosMorosos(self, event):
         
-        datosNecesarios = {'dni': '', 'nombre': '', 'tel': ''}
-        lista_telefonos_clientes = []
+        columnas = ['DNI', 'Nombre', 'Telefono']
+        telefonos= []
 
         for cliente in clientes.getClientesMorosos():
-            datosNecesarios['dni'] = cliente.getDni()
-            datosNecesarios['nombre'] = cliente.getNombre()
-            datosNecesarios['tel'] = cliente.getTel()
-            lista_telefonos_clientes.append(datosNecesarios)
+            tupla_datos = (cliente.getDni(), cliente.getNombre(), cliente.getTelefono())
 
-        #se debe instanciar la ventana que contenga los telefonos        
+            telefonos.append(tupla_datos)
+
+        controlador_infome = InformeListaController('Lista de Telefonos Morosos', columnas, telefonos)      
 
     def listaCumpleaniosMes(self, event):
+
+        columnas = ['DNI', 'Nombre', 'Telefono', 'E-mail']
         cumpleanieros = []
 
         for cliente in clientes.getClientes():
             if cliente.cumpleAniosEsteMes():
-                cumpleanieros.append(cliente)
-
-        #se debe instanciar la ventana que contenga los clientes    
+                tupla_datos = (cliente.getDni(), cliente.getNombre(), cliente.getTelefono(), cliente.getEmail)
+                cumpleanieros.append(tupla_datos)
+        
+        controlador_infome = InformeListaController('Lista Cumpleaños', columnas, cumpleanieros)
 
 
     def informeTotales(self, event):
@@ -494,6 +495,15 @@ class AppController:
 
             total_deuda += cliente.getSaldo()
 
+        columnas = ['Indicador', 'Total']
+        totales = []
+        totales.append(('Total Ganancias', total_ganancias))
+        totales.append(('Total Deudas', total_deuda))
+        totales.append(('Total Inversion', total_inversion))
+        totales.append(('Capital en Stock', total_capital_en_prendas))
+
+        controlador = InformeListaController('Informe de Totales', columnas, totales)
+
         #se debe instanciar la ventana que tiene los totales
 
 #enable o algo asi
@@ -506,46 +516,61 @@ class DetalleClienteController:
     def __init__(self, cliente, padre):
 
         self.cliente = cliente
-        self.data = data.load()
-
-        self.main_window = DetalleClienteFrame(padre, -1, "Detalle Cliente %s" %cliente.getNombre())
-
+        self.detalle_window = DetalleClienteFrame(padre, -1, "Detalle Cliente %s" %cliente.getNombre())
         self.initUi()
 
         self.main_window.Show()
 
     def initUi(self):
 
-        # Cargar las listas Detalle_Cliente
-        # =============================================================
 
         # lista_resumen_clientes    
-        list_resumen_cliente = self.main_window.list_resumen_cliente
+        list_resumen_cliente = self.detalle_window.list_resumen_cliente
 
         # Agregar columnas a lista_resumen_cliente
         list_resumen_cliente.InsertColumn(0, "Fecha", width=100)
         list_resumen_cliente.InsertColumn(1, "Tipo", width=200)
         list_resumen_cliente.InsertColumn(2, "Codigo", width=200)
-        list_resumen_cliente.InsertColumn(3, "Monto")
+        list_resumen_cliente.InsertColumn(3, "Nombre", width=200)
+        list_resumen_cliente.InsertColumn(4, "Monto", width=100)
 
-        # Agregar items a lista_resumen_cliente
-        for item in self.cliente.getMovimientos():
+        #Agregar los movimientos a la lista
+        self.agregarMovimientos()
 
-            idx = list_resumen_cliente.GetItemCount()
-            if isinstance(item, Compra):
-                list_resumen_cliente.InsertStringItem(idx, "%s" % item.movimiento.fecha)
-                list_resumen_cliente.SetStringItem(idx, 1, "Compra")
-                list_resumen_cliente.SetStringItem(idx, 2, "%s" % item.Prenda.getCodigo()) 
-                list_resumen_cliente.SetStringItem(idx, 3, "%s" % item.getSaldo())                
-            elif isinstance(movimiento, Pago):
-                cliente_casual.addPago(movimiento)
-
-
-            list_resumen_cliente.InsertStringItem(idx, "%s") #/%s/%s" % (datetime.date.today().day, datetime.date.today().month, datetime.date.today().year)
-            list_resumen_cliente.SetStringItem(idx, 1, "%s" % item.getNombre()) 
-            list_resumen_cliente.SetStringItem(idx, 2, "%s" % item.getTelefono()) 
-            list_resumen_cliente.SetStringItem(idx, 3, "%s" % item.getSaldo()) 
+        #setear datos del cliente
+        self.detalle_window.texto_dni.SetValue(self.cliente.getDni())
+        self.detalle_window.texto_nombre.SetValue(self.cliente.getNombre())
+        self.detalle_window.texto_direccion.SetValue(self.cliente.getDireccion())
+        self.detalle_window.date_fecha_nacimiento.SetDate(cliente.getFechaNacimiento())
+        self.detalle_window.texto_telefono.SetValue(self.cliente.getTelefono())
+        self.detalle_window.texto_email.SetValue(self.cliente.getEmail)
+    
+    def agregarMovimientoALista(movimiento):
+        idx = list_resumen_cliente.GetItemCount()
         
+        if isinstance(movimiento, 'Compra'):
+                list_resumen_cliente.InsertStringItem(idx, "%s" % movimiento.fecha)
+                list_resumen_cliente.SetStringItem(idx, 1, "Compra")
+                list_resumen_cliente.SetStringItem(idx, 2, "%s" % movimiento.prenda.getCodigo())
+                list_resumen_cliente.SetStringItem(idx, 3, "%s" % movimiento.prenda.getNombre())
+                list_resumen_cliente.SetStringItem(idx, 4, "%s" % movimiento.monto)                
+        elif isinstance(movimiento, 'Pago'):
+            list_resumen_cliente.InsertStringItem(idx, "%s" % movimiento.fecha)
+            list_resumen_cliente.SetStringItem(idx, 1, "Pago") 
+            list_resumen_cliente.SetStringItem(idx, 2, "-")
+            list_resumen_cliente.SetStringItem(idx, 3, "-") 
+            list_resumen_cliente.SetStringItem(idx, 3, "%s" % movimiento.monto)
+        elif isinstance(movimiento, 'Condicional'):
+            list_resumen_cliente.InsertStringItem(idx, "%s" % movimiento.fecha)
+            list_resumen_cliente.SetStringItem(idx, 1, "Condicional") 
+            list_resumen_cliente.SetStringItem(idx, 2, "%s" % movimiento.prenda.getCodigo())
+            list_resumen_cliente.SetStringItem(idx, 3, "%s" % movimiento.prenda.getNombre())
+            list_resumen_cliente.SetStringItem(idx, 3, "0")
+
+    def agregarMovimientos():
+
+        for mov in self.cliente.getMovimientos()
+            self.agregarMovimientoALista(mov)
 
 #fecha, tipo:va si es condi, compra o pago...., 
 #codigo prenda: el codigo pero si es pago no iene codi, 
