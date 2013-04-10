@@ -17,7 +17,6 @@ class AppController:
 
         self.app = app
         self.data = data.load()
-
         self.clientes = self.data["clientes"]
         self.compras = self.data["prendas"]
         self.configuracion = self.data["configuracion"]
@@ -27,6 +26,7 @@ class AppController:
         self.initUi()
         self.connectEvent()
         self.main_window.Show()
+
 
 
     def initUi(self):
@@ -105,8 +105,6 @@ class AppController:
 
         for p in pr:
             self.agregarClienteALista(p)
-
-
 	
 
     def connectEvent(self):
@@ -174,6 +172,7 @@ class AppController:
         pub.subscribe(self.actualizadaConfiguracionClientes, "CONFIGURACION_CLIENTES_CAMBIO")
 
         #suscripcion a eventos carrito
+
         pub.subscribe(self.prendaAgregadaCarrito, "PRENDA_AGREGADA_CARRITO")
         pub.subscribe(self.prendaEliminadaCarrito, "PRENDA_ELIMINADA_CARRITO")
         pub.subscribe(self.carritoVaciado, "CARRITO_VACIADO")
@@ -181,7 +180,8 @@ class AppController:
 
     #metodos de la pestania prendas----------------------------------------------
 
-    def mostrarDetallePrenda(self, event):
+
+    def mostrarDetallePrenda(self):
 
         seleccionado = self.main_window.lista_prendas.getFocusedItem()
         
