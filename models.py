@@ -73,12 +73,13 @@ class Cliente:
     Representa a un Cliente, y contiene su informacion.
     """
 
-    def __init__(self, dni, nombre, telefono, email, fecha_nacimiento):
+    def __init__(self, dni, nombre, telefono, email, direccion, fecha_nacimiento):
 
         self._dni = dni
         self._nombre = nombre
         self._telefono = telefono
         self._email = email
+        self._direccion = direccion
         self._fecha_nacimiento = fecha_nacimiento
 
         self._compras = []
@@ -103,8 +104,12 @@ class Cliente:
         self._email = email
         pub.sendMessage("CAMBIO_CLIENTE", self)
 
-    def setFechaNacimiento(fecha):
+    def setFechaNacimiento(self, fecha):
         self._fecha_nacimiento = fecha
+        pub.sendMessage("CAMBIO_CLIENTE", self)
+
+    def setDireccion(self, direccion):
+        self._direccion = direccion
         pub.sendMessage("CAMBIO_CLIENTE", self)
 
    
@@ -206,6 +211,11 @@ class Cliente:
     def getEmail(self):
 
         return self._email
+
+    def getFechaNacimiento(self):
+
+        return self._fecha_nacimiento
+
 
     def cumpleAniosEsteMes(self):
 
@@ -403,31 +413,12 @@ class ListaPrendas:
 
     def deletePrenda(self, prenda):
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-        self._prendas.remove(prenda)
-        pub.sendMessage("PRENDA_ELIMINADA", self)
-=======
-=======
->>>>>>> 4f3ba883e2a253fca060924d617e0c44ab379c3c
         if prenda.getEstado() = 'disponible':
-=======
-        if prenda.getEstado() == 'disponible':
->>>>>>> 5cc06cb3ee37a62c41d504ccabdc6c3e1af97cb1
             self._prendas.remove(prenda)
             pub.sendMessage("PRENDA_ELIMINADA", self)
         else:
             raise NameError('prenda_no_disponible')
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> b7eebbc6613a31c5543e71deab4b1d900927d265
-=======
 
->>>>>>> 4f3ba883e2a253fca060924d617e0c44ab379c3c
-
-=======
->>>>>>> 5cc06cb3ee37a62c41d504ccabdc6c3e1af97cb1
 
     def getPrendas(self): 
     
@@ -556,4 +547,4 @@ class Configuracion:
 
 #Creacion del cliente casual, al que se le asignan ventas casuales.
 
-cliente_casual = Cliente("0", 'cliente_casual', '', '', '')
+cliente_casual = Cliente("0", 'cliente_casual', '', '', '', '')

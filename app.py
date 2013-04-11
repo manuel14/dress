@@ -18,23 +18,6 @@ class AppController:
         self.app = app
         self.data = data.load()
 
-<<<<<<< HEAD
-        self.clientes = self.data.objects["clientes"]
-        self.compras = self.data.objects["prendas"]
-        self.carrito = Carrito()
-<<<<<<< HEAD
-=======
-
-        self.configuracion = self.data.objects["configuracion"]
-
->>>>>>> 4f3ba883e2a253fca060924d617e0c44ab379c3c
-
-    	self.main_window = MainFrame(None, -1, "A&M Moda")
-
-    	self.initUi()
-
-    	self.main_window.Show()
-=======
         self.clientes = self.data["clientes"]
         self.compras = self.data["prendas"]
         self.configuracion = self.data["configuracion"]
@@ -44,54 +27,8 @@ class AppController:
         self.initUi()
         self.connectEvent()
         self.main_window.Show()
->>>>>>> 5cc06cb3ee37a62c41d504ccabdc6c3e1af97cb1
-
 
     def initUi(self):
-
-        # Cargar las listas principales, lista_clientes y lista_prendas
-        # =============================================================
-
-        # lista_clientes	
-<<<<<<< HEAD
-<<<<<<< HEAD
-        lista_clientes = self.main_window.lista_clientes
-
-        # Agregar columnas a lista_clientes
-        lista_clientes.InsertColumn(0, "DNI", width=100)
-        lista_clientes.InsertColumn(1, "Nombre", width=300)
-        lista_clientes.InsertColumn(2, "Telefono", width=200)
-        lista_clientes.InsertColumn(3, "Saldo")
-
-        # Agregar items a lista_clientes
-        for item in self.clientes.getClientes():
-
-            idx = lista_clientes.GetItemCount()
-            lista_clientes.InsertStringItem(idx, "%s" % item.getDni()) 
-            lista_clientes.SetStringItem(idx, 1, "%s" % item.getNombre()) 
-            lista_clientes.SetStringItem(idx, 2, "%s" % item.getTelefono()) 
-            lista_clientes.SetStringItem(idx, 3, "%s" % item.getSaldo()) 
-=======
-    	lista_clientes = self.main_window.lista_clientes
-
-    	# Agregar columnas a lista_clientes
-    	lista_clientes.InsertColumn(0, "DNI", width=100)
-    	lista_clientes.InsertColumn(1, "Nombre", width=300)
-    	lista_clientes.InsertColumn(2, "Telefono", width=200)
-    	lista_clientes.InsertColumn(3, "Saldo")
-
-
-	   # Agregar items a lista_clientes
-    	for item in self.clientes.getClientes():
-
-    	    idx = lista_clientes.GetItemCount()
-    	    lista_clientes.InsertStringItem(idx, "%s" % item.getDni()) 
-    	    lista_clientes.SetStringItem(idx, 1, "%s" % item.getNombre()) 
-    	    lista_clientes.SetStringItem(idx, 2, "%s" % item.getTelefono()) 
-    	    lista_clientes.SetStringItem(idx, 3, "%s" % item.getSaldo()) 
-
->>>>>>> 4f3ba883e2a253fca060924d617e0c44ab379c3c
-=======
 
         lista_clientes = self.main_window.lista_clientes
 
@@ -163,18 +100,6 @@ class AppController:
         for p in pr:
             self.agregarClienteALista(p)
 
-
-<<<<<<< HEAD
-            idx = lista_clientes.GetItemCount()
-            lista_clientes.InsertStringItem(idx, "%s" % item.getDni()) 
-            lista_clientes.SetStringItem(idx, 1, "%s" % item.getNombre()) 
-            lista_clientes.SetStringItem(idx, 2, "%s" % item.getTelefono()) 
-            lista_clientes.SetStringItem(idx, 3, "%s" % item.getSaldo()) 
->>>>>>> 5cc06cb3ee37a62c41d504ccabdc6c3e1af97cb1
-=======
->>>>>>> ce0d0e9ee6f496a3e4b65c2c79d1fc9a6a09b13f
-	
-
     def connectEvent(self):
         
         #vinculacion pestania prendas eventos
@@ -204,7 +129,7 @@ class AppController:
         self.main_window.Bind(wx.EVT_MENU, self.restaurarBackup, self.main_window.restaurar_backup)
         self.main_window.Bind(wx.EVT_MENU, self.verDisponibles), self.main_window.ver_disponibles 
         self.main_window.Bind(wx.EVT_MENU, self.verCondicionales, self.main_window.ver_condicionales)
-        self.main_window.Bind(wx.EVT_MENU, self.verVendidas, self.MainFrame_window.ver_vendidas)
+        self.main_window.Bind(wx.EVT_MENU, self.verVendidas, self.main_window.ver_vendidas)
         self.main_window.Bind(wx.EVT_MENU, self.verAlDia, self.main_window.ver_al_dia)
         self.main_window.Bind(wx.EVT_MENU, self.verTardios, self.main_window.ver_tardios)
         self.main_window.Bind(wx.EVT_MENU, self.verMorosos, self.main_window.ver_morosos)
@@ -240,19 +165,6 @@ class AppController:
         pub.subscribe(self.actualizadaConfiguracionClientes, "CONFIGURACION_CLIENTES_CAMBIO")
 
         #suscripcion a eventos carrito
-<<<<<<< HEAD
-        pub.suscribe(self.prendaAgregadaCarrito, "PRENDA_AGREGADA_CARRITO")
-        pub.suscribe(self.prendaEliminadaCarrito, "PRENDA_ELIMINADA_CARRITO")
-        pub.suscribe(self.carritoVaciado, "CARRITO_VACIADO")
-
-
-
-<<<<<<< HEAD
-=======
-
-    #metodos de la pestania prendas----------------------------------------------
->>>>>>> 4f3ba883e2a253fca060924d617e0c44ab379c3c
-=======
         pub.subscribe(self.prendaAgregadaCarrito, "PRENDA_AGREGADA_CARRITO")
         pub.subscribe(self.prendaEliminadaCarrito, "PRENDA_ELIMINADA_CARRITO")
         pub.subscribe(self.carritoVaciado, "CARRITO_VACIADO")
@@ -260,7 +172,10 @@ class AppController:
 
     #metodos de la pestania prendas----------------------------------------------
 
->>>>>>> 5cc06cb3ee37a62c41d504ccabdc6c3e1af97cb1
+        pub.subscribe(self.prendaAgregadaCarrito, "PRENDA_AGREGADA_CARRITO")
+        pub.subscribe(self.prendaEliminadaCarrito, "PRENDA_ELIMINADA_CARRITO")
+        pub.subscribe(self.carritoVaciado, "CARRITO_VACIADO")
+        
     def mostrarDetallePrenda(self):
 
         seleccionado = self.main_window.lista_prendas.getFocusedItem()
@@ -270,7 +185,7 @@ class AppController:
             prenda = self.prendas.getPrendaPorCodigo(int(codigo_prenda))
             controlador_detalle_prenda = DetallePrendaController(prenda, self.main_window)
 
-    def eliminarPrenda(self):
+    def eliminarPrenda(self, event):
 
         seleccionado = self.main_window.lista_prendas.getFocusedItem()
 
@@ -288,12 +203,12 @@ class AppController:
 
 
 
-    def nuevaPrenda(self):
+    def nuevaPrenda(self, event):
 
         #recibe self para poder agregar la prenda a la lista prendas. Self.main_window es la ventana padre
         controlador_nueva_prenda = NuevaPrendaController(self, self.main_window)
 
-    def agregarQuitarCarrito(self):
+    def agregarQuitarCarrito(self, event):
         
         seleccionado = self.main_window.lista_prendas.getFocusedItem()
 
@@ -309,7 +224,7 @@ class AppController:
                 error_dialog.Destroy()
                 self.Close()
 
-    def realizarVenta(self):
+    def realizarVenta(self, event):
         if self.carrito.getPrendas().length() != 0:
             controlador_venta = Venta_Controller(self.carrito, self.main_window)
         else:
@@ -327,7 +242,7 @@ class AppController:
         if self.main_window.texto_buscar_prendas.GetValue() == '':
             self.main_window.texto_buscar_prendas.SetValue('Buscar...')
 
-    def buscarPrendas(self):
+    def buscarPrendas(self, event):
         seleccionado = self.main_window.radio_box_prendas.GetSelection()
         prendas_activas = self.prendas.getPrendasActivas(self.configuracion)
         value = self.main_window.texto_buscar_prendas.GetValue()
@@ -350,7 +265,7 @@ class AppController:
     
     #metodos de la pestania clientes---------------------------------------------
 
-    def mostrarDetalleCliente(self):
+    def mostrarDetalleCliente(self, event):
 
         seleccionado = self.main_window.lista_clientes.getFocusedItem()
         
@@ -359,7 +274,7 @@ class AppController:
             cliente = self.clientes.getClientePorDni(dni)
             controlador_detalle_cliente = DetalleClienteController(cliente, self.main_window)        
 
-    def eliminarCliente(self):
+    def eliminarCliente(self, event):
 
         seleccionado = self.main_window.lista_clientes.getFocusedItem()
         
@@ -368,7 +283,7 @@ class AppController:
             cliente = self.clientes.getClientePorDni(dni)
             self.clientes.deleteCliente(cliente)
     
-    def nuevoCliente(self):
+    def nuevoCliente(self, event):
         #recibe self para poder agregar la prenda a la lista clientes
         controlador_nuevo_cliente = NuevoClienteController(self, self.main_window)
 
@@ -380,7 +295,7 @@ class AppController:
         if self.main_window.texto_buscar_clientes.GetValue() == '':
             self.main_window.texto_buscar_clientes.SetValue('Buscar...')
 
-    def buscarClientes(self):
+    def buscarClientes(self, event):
         seleccionado = self.main_window.radio_box_clientes.GetSelection()
         clientes_activos = self.clientes.getClientesActivos(self.configuracion)
         value = self.main_window.texto_buscar_clientes.GetValue()
@@ -437,11 +352,11 @@ class AppController:
 
     def prendaEliminada(self, message):
     
-    for idx in range(self.main_window.lista_prendas.GetItemCount()): 
-        item = self.main_window.lista_prendas.GetItem(idx, 0) 
-        if item.GetText() == message.data.getDni():
-            self.main_window.lista_prendas.DeleteItem(item)
-            break
+        for idx in range(self.main_window.lista_prendas.GetItemCount()): 
+            item = self.main_window.lista_prendas.GetItem(idx, 0) 
+            if item.GetText() == message.data.getDni():
+                self.main_window.lista_prendas.DeleteItem(item)
+                break
 
 
     def actualizadaConfiguracionPrendas(self, message):
@@ -463,7 +378,7 @@ class AppController:
 
     #metodos barra menu------------------------------------------------------------
 
-    def realizarBackup(self):
+    def realizarBackup(self, event):
         
         # Abrir dialogo para seleccionar ruta de destino del archivo de backup
         file_dialog = wx.FileDialog(self, style = wx.SAVE)
@@ -476,84 +391,85 @@ class AppController:
                 msgbox = wx.MessageDialog(self, "Archivo de backup creado satisfactoriamente.", "INFO", style=wx.ICON_INFORMATION)
                 msgbox.ShowModal()
 
-    def restaurarBackup(self):
+    def restaurarBackup(self, event):
         #leo copia del sgpd vos que entendes tu codigo jaja
         pass
     
-    def verDisponibles(self):
+    def verDisponibles(self, event):
         self.configuracion.setMostrarDisponibes(self.ver_disponibles.IsChecked())        
 
-    def verCondicionales(self):
+    def verCondicionales(self, event):
         self.configuracion.setMostrarCondicionales(self.ver_condicionales.IsChecked())
 
-    def verVendidas(self):
+    def verVendidas(self, event):
         self.configuracion.setMostrarVendidas(self.ver_vendidas.IsChecked())
 
-    def verAlDia(self):
+    def verAlDia(self, event):
         self.configuracion.setMostrarAlDia(self.ver_al_dia.IsChecked())
 
-    def verTardios(self):
+    def verTardios(self, event):
         self.configuracion.setMostrarTardios(self.ver_tardios.IsChecked())
 
-    def verMorosos(self):
+    def verMorosos(self, event):
         self.configuracion.setMostrarMorosos(self.ver_morosos.IsChecked())    
     
-    def vaciarCarrito(self):
+    def vaciarCarrito(self, event):
         self.carrito.vaciarCarrito()
 
-    def listaCorreos(self):
+    def listaCorreos(self, event):
         correos = ''
 
         for cliente in clientes.getClientes():
             correos = correos + cliente.getEmail() + ';'
 
-        #se debe instanciar la ventana que contenga la lista
+        controlador_infome = InformeTextoController('E-mail Clientes', correos)
 
-    def listaCorreosMorosos(self):
+    def listaCorreosMorosos(self, event):
         correos = ''
 
         for cliente in clientes.getClientesMorosos():
             correos = correos + cliente.getEmail() + ';'
 
-        #se debe instanciar la ventana que contenga la lista
+        controlador_infome = InformeTextoController('E-mail Clientes Morosos', correos)
 
-    def listaTelefonos(self):
+    def listaTelefonos(self, event):
 
-        datosNecesarios = {'dni': '', 'nombre': '', 'tel': ''}
-        lista_telefonos_clientes = []
+        columnas = ['DNI', 'Nombre', 'Telefono']
+        telefonos= []
 
         for cliente in clientes.getClientes():
-            datosNecesarios['dni'] = cliente.getDni()
-            datosNecesarios['nombre'] = cliente.getNombre()
-            datosNecesarios['tel'] = cliente.getTel()
-            lista_telefonos_clientes.append(datosNecesarios)
+            tupla_datos = (cliente.getDni(), cliente.getNombre(), cliente.getTelefono())
 
-        #se debe instanciar la ventana que contenga los telefonos
+            telefonos.append(tupla_datos)
 
-    def listaTelefonosMorosos(self):
+        controlador_infome = InformeListaController('Lista de Telefonos', columnas, telefonos)
+
+    def listaTelefonosMorosos(self, event):
         
-        datosNecesarios = {'dni': '', 'nombre': '', 'tel': ''}
-        lista_telefonos_clientes = []
+        columnas = ['DNI', 'Nombre', 'Telefono']
+        telefonos= []
 
         for cliente in clientes.getClientesMorosos():
-            datosNecesarios['dni'] = cliente.getDni()
-            datosNecesarios['nombre'] = cliente.getNombre()
-            datosNecesarios['tel'] = cliente.getTel()
-            lista_telefonos_clientes.append(datosNecesarios)
+            tupla_datos = (cliente.getDni(), cliente.getNombre(), cliente.getTelefono())
 
-        #se debe instanciar la ventana que contenga los telefonos        
+            telefonos.append(tupla_datos)
 
-    def listaCumpleaniosMes(self):
+        controlador_infome = InformeListaController('Lista de Telefonos Morosos', columnas, telefonos)      
+
+    def listaCumpleaniosMes(self, event):
+
+        columnas = ['DNI', 'Nombre', 'Telefono', 'E-mail']
         cumpleanieros = []
 
         for cliente in clientes.getClientes():
             if cliente.cumpleAniosEsteMes():
-                cumpleanieros.append(cliente)
+                tupla_datos = (cliente.getDni(), cliente.getNombre(), cliente.getTelefono(), cliente.getEmail)
+                cumpleanieros.append(tupla_datos)
+        
+        controlador_infome = InformeListaController('Lista Cumpleaños', columnas, cumpleanieros)
 
-        #se debe instanciar la ventana que contenga los clientes    
 
-
-    def informeTotales(self):
+    def informeTotales(self, event):
         total_ganancias = 0
         total_deuda = 0
         total_capital_en_prendas = 0
@@ -574,6 +490,15 @@ class AppController:
 
             total_deuda += cliente.getSaldo()
 
+        columnas = ['Indicador', 'Total']
+        totales = []
+        totales.append(('Total Ganancias', total_ganancias))
+        totales.append(('Total Deudas', total_deuda))
+        totales.append(('Total Inversion', total_inversion))
+        totales.append(('Capital en Stock', total_capital_en_prendas))
+
+        controlador = InformeListaController('Informe de Totales', columnas, totales)
+
         #se debe instanciar la ventana que tiene los totales
 
 #enable o algo asi
@@ -586,46 +511,85 @@ class DetalleClienteController:
     def __init__(self, cliente, padre):
 
         self.cliente = cliente
-        self.data = data.load()
-
-        self.main_window = DetalleClienteFrame(padre, -1, "Detalle Cliente %s" %cliente.getNombre())
-
+        self.detalle_window = DetalleClienteFrame(padre, -1, "Detalle Cliente %s" %cliente.getNombre())
         self.initUi()
+        self.connectEvent()
 
         self.main_window.Show()
 
     def initUi(self):
 
-        # Cargar las listas Detalle_Cliente
-        # =============================================================
 
         # lista_resumen_clientes    
-        list_resumen_cliente = self.main_window.list_resumen_cliente
+        list_resumen_cliente = self.detalle_window.list_resumen_cliente
 
         # Agregar columnas a lista_resumen_cliente
         list_resumen_cliente.InsertColumn(0, "Fecha", width=100)
         list_resumen_cliente.InsertColumn(1, "Tipo", width=200)
         list_resumen_cliente.InsertColumn(2, "Codigo", width=200)
-        list_resumen_cliente.InsertColumn(3, "Monto")
+        list_resumen_cliente.InsertColumn(3, "Nombre", width=200)
+        list_resumen_cliente.InsertColumn(4, "Monto", width=100)
 
-        # Agregar items a lista_resumen_cliente
-        for item in self.cliente.getMovimientos():
+        #Agregar los movimientos a la lista
+        self.agregarMovimientos()
 
-            idx = list_resumen_cliente.GetItemCount()
-            if isinstance(item, Compra):
-                list_resumen_cliente.InsertStringItem(idx, "%s" % item.movimiento.fecha)
-                list_resumen_cliente.SetStringItem(idx, 1, "Compra")
-                list_resumen_cliente.SetStringItem(idx, 2, "%s" % item.Prenda.getCodigo()) 
-                list_resumen_cliente.SetStringItem(idx, 3, "%s" % item.getSaldo())                
-            elif isinstance(movimiento, Pago):
-                cliente_casual.addPago(movimiento)
+        #setear datos del cliente
+        self.detalle_window.texto_dni.SetValue(self.cliente.getDni())
+        self.detalle_window.texto_nombre.SetValue(self.cliente.getNombre())
+        self.detalle_window.texto_direccion.SetValue(self.cliente.getDireccion())
+        self.detalle_window.date_fecha_nacimiento.SetDate(cliente.getFechaNacimiento())
+        self.detalle_window.texto_telefono.SetValue(self.cliente.getTelefono())
+        self.detalle_window.texto_email.SetValue(self.cliente.getEmail)
 
+        #setear si el cliente debe o tiene credito
+        if self.cliente.getSaldo() < 0:
+            self.detalle_window.label_saldo.SetValue("Credito")
 
-            list_resumen_cliente.InsertStringItem(idx, "%s") #/%s/%s" % (datetime.date.today().day, datetime.date.today().month, datetime.date.today().year)
-            list_resumen_cliente.SetStringItem(idx, 1, "%s" % item.getNombre()) 
-            list_resumen_cliente.SetStringItem(idx, 2, "%s" % item.getTelefono()) 
-            list_resumen_cliente.SetStringItem(idx, 3, "%s" % item.getSaldo()) 
+    def connectEvent(self):
+
+        #botones
+        self.detalle_window.boton_eliminar_accion.Bind(wx.EVT_BUTTON, self.eliminarAccion)
+        self.detalle_window.boton_eliminar_condicional.Bind(wx.EVT_BUTTON, self.eliminarCondicionales)
+        self.detalle_window.boton_guardar.Bind(wx.EVT_BUTTON, self.guardar)
+        self.detalle_window.boton_cancelar.Bind(wx.EVT_BUTTON, self.cancelar)
+        self.detalle_window.boton_aceptar.Bind(wx.EVT_BUTTON, self.aceptar)
+
+        #labels
+        self.detalle_window.texto_paga_con.Bind(wx.EVT_TEXT_ENTER, self.calcularVuelto)
+
+        #suscripcion a eventos
+        self.pub.subscribe(accionEliminda, "COMPRA_ELIMINADA")
+        self.pub.suscribe(accionEliminada, "PAGO_ELIMINADO")
+        self.pub.suscribe(accionEliminada, "CONDICIONALES_ELIMINADOS")
+    
+    def agregarMovimientoALista(movimiento):
+        idx = list_resumen_cliente.GetItemCount()
         
+        if isinstance(movimiento, 'Compra'):
+                list_resumen_cliente.InsertStringItem(idx, "%s" % movimiento.fecha)
+                list_resumen_cliente.SetStringItem(idx, 1, "Compra")
+                list_resumen_cliente.SetStringItem(idx, 2, "%s" % movimiento.prenda.getCodigo())
+                list_resumen_cliente.SetStringItem(idx, 3, "%s" % movimiento.prenda.getNombre())
+                list_resumen_cliente.SetStringItem(idx, 4, "%s" % movimiento.monto)                
+        elif isinstance(movimiento, 'Pago'):
+            list_resumen_cliente.InsertStringItem(idx, "%s" % movimiento.fecha)
+            list_resumen_cliente.SetStringItem(idx, 1, "Pago") 
+            list_resumen_cliente.SetStringItem(idx, 2, "-")
+            list_resumen_cliente.SetStringItem(idx, 3, "-") 
+            list_resumen_cliente.SetStringItem(idx, 3, "%s" % movimiento.monto)
+        elif isinstance(movimiento, 'Condicional'):
+            list_resumen_cliente.InsertStringItem(idx, "%s" % movimiento.fecha)
+            list_resumen_cliente.SetStringItem(idx, 1, "Condicional") 
+            list_resumen_cliente.SetStringItem(idx, 2, "%s" % movimiento.prenda.getCodigo())
+            list_resumen_cliente.SetStringItem(idx, 3, "%s" % movimiento.prenda.getNombre())
+            list_resumen_cliente.SetStringItem(idx, 3, "0")
+
+    def agregarMovimientos():
+
+        for mov in self.cliente.getMovimientos()
+            self.agregarMovimientoALista(mov)
+
+    def metodo
 
 #fecha, tipo:va si es condi, compra o pago...., 
 #codigo prenda: el codigo pero si es pago no iene codi, 
