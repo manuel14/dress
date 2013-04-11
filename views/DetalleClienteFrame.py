@@ -8,11 +8,12 @@ import wx
 # end wxGlade
 
 
-class FrameDetalleCliente(wx.Frame):
+class Carrito(wx.Frame):
     def __init__(self, *args, **kwds):
-        # begin wxGlade: FrameDetalleCliente.__init__
+        # begin wxGlade: Carrito.__init__
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, *args, **kwds)
+<<<<<<< HEAD
         self.panel_1 = wx.Panel(self, -1)
         self.label_cliente = wx.StaticText(self.panel_1, -1, "CLIENTE")
         self.label_dni = wx.StaticText(self.panel_1, -1, "DNI")
@@ -27,7 +28,40 @@ class FrameDetalleCliente(wx.Frame):
         self.texto_telefono = wx.TextCtrl(self.panel_1, -1, "")
         self.label_email = wx.StaticText(self.panel_1, -1, "e-mail")
         self.text_emial = wx.TextCtrl(self.panel_1, -1, "")
+=======
+>>>>>>> 5cc06cb3ee37a62c41d504ccabdc6c3e1af97cb1
         self.panel_2 = wx.Panel(self, -1)
+<<<<<<< HEAD
+        self.label_carrito = wx.StaticText(self.panel_2, -1, "CARRITO")
+        self.list_carrito = wx.ListCtrl(self.panel_2, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
+        self.boton_quitar = wx.Button(self.panel_2, -1, "Quitar")
+        self.boton_descuento = wx.Button(self.panel_2, -1, "Descuento")
+        self.label_total = wx.StaticText(self.panel_2, -1, "Total", style=wx.ALIGN_RIGHT)
+        self.label_total_imagen = wx.StaticText(self.panel_2, -1, "")
+        self.static_line_1 = wx.StaticLine(self.panel_2, -1)
+        self.label_tiipo_de_venta = wx.StaticText(self.panel_2, -1, "Tipo de Venta")
+        self.notebook = wx.Notebook(self.panel_2, -1, style=0)
+        self.panel_casual = wx.Panel(self.notebook, -1)
+        self.label_entrega_casual = wx.StaticText(self.panel_casual, -1, "Entrega")
+        self.text_entrega_casual = wx.TextCtrl(self.panel_casual, -1, "")
+        self.label_paga_con_casual = wx.StaticText(self.panel_casual, -1, "Paga con")
+        self.text_paga_con_casual_copy = wx.TextCtrl(self.panel_casual, -1, "")
+        self.label_vuelto_casual = wx.StaticText(self.panel_casual, -1, "Vuelto")
+        self.label_vuelto_imagen_casual_copy = wx.StaticText(self.panel_casual, -1, "")
+        self.panel_cliente = wx.Panel(self.notebook, -1)
+        self.texto_buscar_cliente = wx.TextCtrl(self.panel_cliente, -1, "Buscar...")
+        self.radio_btn_dni_cliente = wx.RadioButton(self.panel_cliente, -1, "DNI")
+        self.radio_btn_nombre_cliente = wx.RadioButton(self.panel_cliente, -1, "Nombre")
+        self.list_cliente = wx.ListCtrl(self.panel_cliente, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
+        self.Condicional = wx.CheckBox(self.panel_cliente, -1, "Condicional")
+        self.label_total_cliente = wx.StaticText(self.panel_cliente, -1, "Total")
+        self.texto_total_cliente = wx.TextCtrl(self.panel_cliente, -1, "")
+        self.label_paga_con_cliente = wx.StaticText(self.panel_cliente, -1, "Pagar con")
+        self.texto_paga_con_cliente = wx.TextCtrl(self.panel_cliente, -1, "")
+        self.label_vuelto_cliente = wx.StaticText(self.panel_cliente, -1, "Vuelto")
+        self.label_vuelto_imagen_cliente = wx.StaticText(self.panel_cliente, -1, "")
+        self.boton_imprimir = wx.Button(self.panel_2, -1, "Imprimir")
+=======
         self.static_line_1 = wx.StaticLine(self.panel_2, -1, style=wx.LI_VERTICAL)
         self.label_resumen_cuenta = wx.StaticText(self.panel_2, -1, "Resumen Cuenta")
         self.list_resumen_cliente = wx.ListCtrl(self.panel_2, -1, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
@@ -42,6 +76,7 @@ class FrameDetalleCliente(wx.Frame):
         self.label_vuelto = wx.StaticText(self.panel_2, -1, "Vuelto")
         self.label_vuelto_imagen = wx.StaticText(self.panel_2, -1, "")
         self.boton_guardar = wx.Button(self.panel_2, -1, "Guardar")
+>>>>>>> 259de20a8134007830c315642b1a8fbd2b761c00
         self.boton_cancelar = wx.Button(self.panel_2, -1, "Cancelar")
         self.boton_aceptar = wx.Button(self.panel_2, -1, "Aceptar")
 
@@ -50,8 +85,9 @@ class FrameDetalleCliente(wx.Frame):
         # end wxGlade
 
     def __set_properties(self):
-        # begin wxGlade: FrameDetalleCliente.__set_properties
+        # begin wxGlade: Carrito.__set_properties
         self.SetTitle("frame_1")
+<<<<<<< HEAD
         self.label_cliente.SetFont(wx.Font(25, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
         self.label_dni.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
         self.texto_dni.SetMinSize((100, 25))
@@ -87,13 +123,104 @@ class FrameDetalleCliente(wx.Frame):
         self.texto_paga_con.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
         self.label_vuelto.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
         self.label_vuelto_imagen.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+=======
+        self.SetSize((854, 537))
+        self.label_carrito.SetFont(wx.Font(25, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2"))
+        self.list_carrito.SetMinSize((200, 100))
+        self.list_carrito.SetFont(wx.Font(11, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2"))
+        self.boton_quitar.SetMinSize((76, 20))
+        self.boton_quitar.SetFont(wx.Font(9, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.boton_descuento.SetFont(wx.Font(9, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.label_total.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2"))
+        self.label_total_imagen.SetMinSize((140, 25))
+        self.label_total_imagen.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2"))
+        self.label_tiipo_de_venta.SetFont(wx.Font(15, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2"))
+        self.label_entrega_casual.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2"))
+        self.text_entrega_casual.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2"))
+        self.label_paga_con_casual.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2"))
+        self.text_paga_con_casual_copy.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2"))
+        self.label_vuelto_casual.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2"))
+        self.label_vuelto_imagen_casual_copy.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2"))
+        self.texto_buscar_cliente.SetMinSize((250, 25))
+        self.texto_buscar_cliente.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2"))
+        self.radio_btn_dni_cliente.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2"))
+        self.radio_btn_nombre_cliente.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2"))
+        self.list_cliente.SetFont(wx.Font(11, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2"))
+        self.Condicional.SetFont(wx.Font(11, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2"))
+        self.label_total_cliente.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2"))
+        self.label_paga_con_cliente.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2"))
+        self.texto_paga_con_cliente.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2"))
+        self.label_vuelto_cliente.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2"))
+        self.label_vuelto_imagen_cliente.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2"))
+        self.notebook.SetFont(wx.Font(11, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.panel_2.SetFont(wx.Font(9, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+>>>>>>> 5cc06cb3ee37a62c41d504ccabdc6c3e1af97cb1
         # end wxGlade
 
     def __do_layout(self):
-        # begin wxGlade: FrameDetalleCliente.__do_layout
+        # begin wxGlade: Carrito.__do_layout
         sizer_1 = wx.BoxSizer(wx.VERTICAL)
         sizer_2 = wx.BoxSizer(wx.VERTICAL)
+        sizer_7 = wx.BoxSizer(wx.VERTICAL)
+        sizer_13 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_10 = wx.BoxSizer(wx.VERTICAL)
+        sizer_9_copy = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_14 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_11 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_9 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_3 = wx.BoxSizer(wx.VERTICAL)
+        sizer_6 = wx.BoxSizer(wx.HORIZONTAL)
+        grid_sizer_1 = wx.FlexGridSizer(1, 1, 0, 0)
+        sizer_4 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_5 = wx.BoxSizer(wx.VERTICAL)
+<<<<<<< HEAD
+        sizer_3.Add(self.label_carrito, 0, wx.LEFT, 7)
+        sizer_4.Add(self.list_carrito, 1, wx.LEFT|wx.EXPAND, 5)
+        sizer_5.Add(self.boton_quitar, 0, 0, 0)
+        sizer_5.Add((20, 50), 0, 0, 0)
+        sizer_5.Add(self.boton_descuento, 0, 0, 0)
+        sizer_4.Add(sizer_5, 0, wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.ALIGN_CENTER_VERTICAL, 45)
+        sizer_3.Add(sizer_4, 1, wx.EXPAND, 0)
+        sizer_6.Add(self.label_total, 1, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 390)
+        grid_sizer_1.Add(self.label_total_imagen, 0, wx.LEFT, 3)
+        sizer_6.Add(grid_sizer_1, 1, wx.EXPAND, 0)
+        sizer_3.Add(sizer_6, 0, wx.EXPAND, 0)
+        sizer_3.Add(self.static_line_1, 0, wx.TOP|wx.EXPAND, 45)
+        sizer_3.Add(self.label_tiipo_de_venta, 0, wx.ALL, 3)
+        sizer_2.Add(sizer_3, 1, wx.EXPAND, 0)
+        sizer_9.Add(self.label_entrega_casual, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 2)
+        sizer_9.Add(self.text_entrega_casual, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+        sizer_9.Add(self.label_paga_con_casual, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+        sizer_9.Add(self.text_paga_con_casual_copy, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+        sizer_9.Add(self.label_vuelto_casual, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+        sizer_9.Add(self.label_vuelto_imagen_casual_copy, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+        self.panel_casual.SetSizer(sizer_9)
+        sizer_11.Add(self.texto_buscar_cliente, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 3)
+        sizer_11.Add(self.radio_btn_dni_cliente, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 3)
+        sizer_11.Add(self.radio_btn_nombre_cliente, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 3)
+        sizer_10.Add(sizer_11, 0, wx.EXPAND, 0)
+        sizer_14.Add(self.list_cliente, 1, wx.EXPAND, 0)
+        sizer_14.Add(self.Condicional, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+        sizer_10.Add(sizer_14, 1, wx.EXPAND, 0)
+        sizer_9_copy.Add(self.label_total_cliente, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+        sizer_9_copy.Add(self.texto_total_cliente, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+        sizer_9_copy.Add(self.label_paga_con_cliente, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+        sizer_9_copy.Add(self.texto_paga_con_cliente, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+        sizer_9_copy.Add(self.label_vuelto_cliente, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+        sizer_9_copy.Add(self.label_vuelto_imagen_cliente, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
+        sizer_10.Add(sizer_9_copy, 0, wx.EXPAND, 0)
+        self.panel_cliente.SetSizer(sizer_10)
+        self.notebook.AddPage(self.panel_casual, "Casual")
+        self.notebook.AddPage(self.panel_cliente, "Cliente")
+        sizer_7.Add(self.notebook, 1, wx.ALL|wx.EXPAND, 2)
+        sizer_13.Add(self.boton_imprimir, 0, wx.ALL, 3)
+        sizer_13.Add(self.boton_cancelar, 0, wx.ALL, 3)
+        sizer_13.Add(self.boton_aceptar, 0, wx.ALL, 3)
+        sizer_7.Add(sizer_13, 0, wx.ALIGN_RIGHT, 0)
+        sizer_2.Add(sizer_7, 0, wx.EXPAND, 0)
+        self.panel_2.SetSizer(sizer_2)
+        sizer_1.Add(self.panel_2, 1, wx.RIGHT, 0)
+=======
         sizer_1_copy = wx.BoxSizer(wx.VERTICAL)
         grid_sizer_7 = wx.FlexGridSizer(1, 3, 0, 0)
         grid_sizer_8 = wx.FlexGridSizer(1, 2, 0, 0)
@@ -160,10 +287,26 @@ class FrameDetalleCliente(wx.Frame):
         self.panel_2.SetSizer(sizer_5)
         sizer_2.Add(self.panel_2, 1, wx.EXPAND, 0)
         sizer_1.Add(sizer_2, 1, wx.EXPAND, 0)
+>>>>>>> 259de20a8134007830c315642b1a8fbd2b761c00
         self.SetSizer(sizer_1)
-        sizer_1.Fit(self)
         self.Layout()
         # end wxGlade
+
+# end of class Carrito
+
+
+class FrameDetalleCliente(wx.Frame):
+    def __init__(self, *args, **kwds):
+        # content of this block not found: did you rename this class?
+        pass
+
+    def __set_properties(self):
+        # content of this block not found: did you rename this class?
+        pass
+
+    def __do_layout(self):
+        # content of this block not found: did you rename this class?
+        pass
 
 # end of class FrameDetalleCliente
 if __name__ == "__main__":

@@ -207,6 +207,13 @@ class Cliente:
 
         return self._email
 
+    def cumpleAniosEsteMes(self):
+
+        if (self._fecha_nacimiento.month == datetime.date.today().month):
+            return True
+        else: 
+            return False
+
 class Prenda:
     """
     Representa una prenda de ropa. El producto del negocio.
@@ -398,22 +405,29 @@ class ListaPrendas:
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         self._prendas.remove(prenda)
         pub.sendMessage("PRENDA_ELIMINADA", self)
 =======
 =======
 >>>>>>> 4f3ba883e2a253fca060924d617e0c44ab379c3c
         if prenda.getEstado() = 'disponible':
+=======
+        if prenda.getEstado() == 'disponible':
+>>>>>>> 5cc06cb3ee37a62c41d504ccabdc6c3e1af97cb1
             self._prendas.remove(prenda)
             pub.sendMessage("PRENDA_ELIMINADA", self)
         else:
             raise NameError('prenda_no_disponible')
+<<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> b7eebbc6613a31c5543e71deab4b1d900927d265
 =======
 
 >>>>>>> 4f3ba883e2a253fca060924d617e0c44ab379c3c
 
+=======
+>>>>>>> 5cc06cb3ee37a62c41d504ccabdc6c3e1af97cb1
 
     def getPrendas(self): 
     
@@ -476,7 +490,7 @@ class Carrito:
 
         #agrega o quita una prenda al carrito, siempre y cuando este disponible
         
-        if prenda.getEstado() = 'disponible':
+        if prenda.getEstado() == 'disponible':
             try:
                 self._prendas.remove(prenda)
                 pub.sendMessage("PRENDA_ELIMINADA_CARRITO", self)          
@@ -542,4 +556,4 @@ class Configuracion:
 
 #Creacion del cliente casual, al que se le asignan ventas casuales.
 
-cliente_casual = Cliente("0", 'cliente_casual', '', '')
+cliente_casual = Cliente("0", 'cliente_casual', '', '', '')
