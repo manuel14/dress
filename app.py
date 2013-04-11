@@ -576,13 +576,13 @@ class DetalleClienteController:
             list_resumen_cliente.SetStringItem(idx, 1, "Pago") 
             list_resumen_cliente.SetStringItem(idx, 2, "-")
             list_resumen_cliente.SetStringItem(idx, 3, "-") 
-            list_resumen_cliente.SetStringItem(idx, 3, "%s" % movimiento.monto)
+            list_resumen_cliente.SetStringItem(idx, 4, "%s" % movimiento.monto)
         elif isinstance(movimiento, 'Condicional'):
             list_resumen_cliente.InsertStringItem(idx, "%s" % movimiento.fecha)
             list_resumen_cliente.SetStringItem(idx, 1, "Condicional") 
             list_resumen_cliente.SetStringItem(idx, 2, "%s" % movimiento.prenda.getCodigo())
             list_resumen_cliente.SetStringItem(idx, 3, "%s" % movimiento.prenda.getNombre())
-            list_resumen_cliente.SetStringItem(idx, 3, "0")
+            list_resumen_cliente.SetStringItem(idx, 4, "0")
 
     def agregarMovimientos():
 
@@ -595,7 +595,62 @@ class DetalleClienteController:
 #codigo prenda: el codigo pero si es pago no iene codi, 
 #monto: si es condicional no tine monto
 
+class InformeTextoController:
+    """
+    Controlador de Informe de Texto
+    """
 
+    def __init__(self, titulo, correos, padre):
+
+        self.titulo = titulo
+        self.correos = correos
+        self.informe_window = InformeTextoFrame(padre, -1, "Informe")
+        self.initUi()
+        
+        self.main_window.Show()
+        self.informe_window.text_titulo.SetValue(correos)
+        self.informe_window.label_titulo.SetValue(titulo)
+
+
+class InformeListaController:
+    """
+    Controlador de Informe Lista
+    """
+
+    def __init__(self, titulo, columnas, telefonos, padre):
+
+        self.titulo = titulo
+        self.columnas = columnas
+        self.telefonos = telefonos
+        self.informe_window = InformeListaFrame(padre, -1, "Informe")
+        self.initUi()
+        
+        self.main_window.Show()
+        self.informe_window.label_titulo.SetValue(titulo)
+
+    def initUi(self):
+
+
+        # lista_telefonos   
+        list_titulo = self.informe_window.list_titulo
+
+        # Agregar columnas a lista_telefonos
+        j = 0
+        for i in columnas:
+            list_titulo.InsertColumn(j, i, width=150)
+            j = j + 1
+
+        #Agregar los movimientos a la lista
+        for i in telefonos:
+            idx = list_titulo.GetItemCount()
+            cont = 0
+            for elem in i:
+                if (cont == 0):
+                    list_titulo.InsertStringItem(idx, "%s" % elem)
+                else:
+                    list_titulo.SetStringItem(idx, cont, "%s" % elem)
+                cont = cont + 1
+                
 
 
 if __name__=='__main__':
