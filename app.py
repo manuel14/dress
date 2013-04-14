@@ -10,6 +10,8 @@ from models import *
 from views.MainFrame import MainFrame
 from views.NuevoClienteFrame import NuevoClienteFrame
 from views.DetalleClienteFrame import DetalleClienteFrame
+from views.InformeTextoFrame import InformeTextoFrame
+from views.InformeListaFrame import InformeListaFrame
 
 class AppController:
     """
@@ -20,6 +22,7 @@ class AppController:
 
         self.app = app
         self.data = data.load()
+
         self.clientes = self.data["clientes"]
         self.prendas = self.data["prendas"]
         self.configuracion = self.data["configuracion"]
@@ -30,14 +33,7 @@ class AppController:
         self.connectEvent()
         self.main_window.Show()
 
-
-
     def initUi(self):
-
-        # Cargar las listas principales, lista_clientes y lista_prendas
-        # =============================================================
-
-        # lista_clientes	
 
         lista_clientes = self.main_window.lista_clientes
 
@@ -114,7 +110,6 @@ class AppController:
 
         for p in pr:
             self.agregarClienteALista(p)
-	
 
     def connectEvent(self):
         
@@ -181,7 +176,6 @@ class AppController:
         pub.subscribe(self.actualizadaConfiguracionClientes, "CONFIGURACION_CLIENTES_CAMBIO")
 
         #suscripcion a eventos carrito
-
         pub.subscribe(self.prendaAgregadaCarrito, "PRENDA_AGREGADA_CARRITO")
         pub.subscribe(self.prendaEliminadaCarrito, "PRENDA_ELIMINADA_CARRITO")
         pub.subscribe(self.carritoVaciado, "CARRITO_VACIADO")
@@ -189,7 +183,10 @@ class AppController:
 
     #metodos de la pestania prendas----------------------------------------------
 
-
+        pub.subscribe(self.prendaAgregadaCarrito, "PRENDA_AGREGADA_CARRITO")
+        pub.subscribe(self.prendaEliminadaCarrito, "PRENDA_ELIMINADA_CARRITO")
+        pub.subscribe(self.carritoVaciado, "CARRITO_VACIADO")
+        
     def mostrarDetallePrenda(self):
 
         seleccionado = self.main_window.lista_prendas.GetFocusedItem()
@@ -436,7 +433,7 @@ class AppController:
     def listaCorreosMorosos(self, event):
         correos = ''
 
-        for cliente in clientes.getClientesMorosos():
+        for cliente in self.clientes.getClientesMorosos():
             correos = correos + cliente.getEmail() + ';'
 
         controlador_infome = InformeTextoController('E-mail Clientes Morosos', correos, self.main_window)
@@ -446,19 +443,19 @@ class AppController:
         columnas = ['DNI', 'Nombre', 'Telefono']
         telefonos= []
 
-        for cliente in clientes.getClientes():
+        for cliente in self.clientes.getClientes():
             tupla_datos = (cliente.getDni(), cliente.getNombre(), cliente.getTelefono())
 
             telefonos.append(tupla_datos)
 
-        controlador_infome = InformeListaController('Lista de Telefonos', columnas, telefonos)
+        controlador_infome = InformeListaController('Lista de Telefonos', columnas, telefonos, self.main_window)
 
     def listaTelefonosMorosos(self, event):
         
         columnas = ['DNI', 'Nombre', 'Telefono']
         telefonos= []
 
-        for cliente in clientes.getClientesMorosos():
+        for cliente in self.clientes.getClientesMorosos():
             tupla_datos = (cliente.getDni(), cliente.getNombre(), cliente.getTelefono())
 
             telefonos.append(tupla_datos)
@@ -470,9 +467,9 @@ class AppController:
         columnas = ['DNI', 'Nombre', 'Telefono', 'E-mail']
         cumpleanieros = []
 
-        for cliente in clientes.getClientes():
+        for cliente in self.clientes.getClientes():
             if cliente.cumpleAniosEsteMes():
-                tupla_datos = (cliente.getDni(), cliente.getNombre(), cliente.getTelefono(), cliente.getEmail)
+                tupla_datos = (cliente.getDni(), cliente.getNombre(), cliente.getTelefono(), cliente.getEmail())
                 cumpleanieros.append(tupla_datos)
         
         controlador_infome = InformeListaController('Lista Cumpleanos', columnas, cumpleanieros, self.main_window)
@@ -485,7 +482,7 @@ class AppController:
         total_inversion = 0
 
 
-        for prenda in prendas:
+        for prenda in self.prendas.getPrendas():
             
             total_inversion += prenda.precio
 
@@ -495,7 +492,7 @@ class AppController:
             if (prenda.getEstado() == 'disponible') or (prenda.getEstado() == 'condicional'):
                 total_capital_en_prendas += prenda.precio
 
-        for cliente in clientes:
+        for cliente in self.clientes.getClientes():
 
             total_deuda += cliente.getSaldo()
 
@@ -531,11 +528,11 @@ class DetalleClienteController:
         list_resumen_cliente = self.detalle_window.list_resumen_cliente
 
         # Agregar columnas a lista_resumen_cliente
-        list_resumen_cliente.InsertColumn(0, "Fecha", width=100)
-        list_resumen_cliente.InsertColumn(1, "Tipo", width=200)
-        list_resumen_cliente.InsertColumn(2, "Codigo", width=200)
-        list_resumen_cliente.InsertColumn(3, "Nombre", width=200)
-        list_resumen_cliente.InsertColumn(4, "Monto", width=100)
+        list_resumen_cliente.InsertColumn(0, "Fecha", width=90)
+        list_resumen_cliente.InsertColumn(1, "Tipo", width=100)
+        list_resumen_cliente.InsertColumn(2, "Codigo", width=100)
+        list_resumen_cliente.InsertColumn(3, "Nombre", width=150)
+        list_resumen_cliente.InsertColumn(4, "Monto", width=80)
 
         #Agregar los movimientos a la lista
         self.agregarMovimientos()
@@ -720,7 +717,62 @@ class NuevoClienteController():
     def disableGuardar(self):
         self.nuevo_window.boton_guardar.Enable(False)
 
+class InformeTextoController:
+    """
+    Controlador de Informe de Texto
+    """
 
+    def __init__(self, titulo, correos, padre):
+
+        self.titulo = titulo
+        self.correos = correos
+        self.informe_window = InformeTextoFrame(padre, -1, "Informe")
+        
+
+        self.informe_window.text_titulo.SetValue(correos)
+        self.informe_window.label_titulo.SetLabel(titulo)
+        self.informe_window.Show()
+
+
+class InformeListaController:
+    """
+    Controlador de Informe Lista
+    """
+
+    def __init__(self, titulo, columnas, telefonos, padre):
+
+        self.titulo = titulo
+        self.columnas = columnas
+        self.telefonos = telefonos
+        self.informe_window = InformeListaFrame(padre, -1, "Informe")
+        self.initUi()
+        
+        self.informe_window.Show()
+        self.informe_window.label_titulo.SetLabel(titulo)
+
+    def initUi(self):
+
+
+        # lista_telefonos   
+        list_titulo = self.informe_window.list_titulo
+
+        # Agregar columnas a lista_telefonos
+        j = 0
+        for i in self.columnas:
+            list_titulo.InsertColumn(j, i, width=150)
+            j = j + 1
+
+        #Agregar los movimientos a la lista
+        for i in self.telefonos:
+            idx = list_titulo.GetItemCount()
+            cont = 0
+            for elem in i:
+                if (cont == 0):
+                    list_titulo.InsertStringItem(idx, "%s" % elem)
+                else:
+                    list_titulo.SetStringItem(idx, cont, "%s" % elem)
+                cont = cont + 1
+                
 
 
 if __name__=='__main__':

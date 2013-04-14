@@ -234,8 +234,10 @@ class Cliente:
 
 
     def cumpleAniosEsteMes(self):
+        nacim = self._fecha_nacimiento.GetMonth() +1
+        actual = datetime.date.today().month
 
-        if (self._fecha_nacimiento.month == datetime.date.today().month):
+        if nacim == actual:
             return True
         else: 
             return False
@@ -428,12 +430,13 @@ class ListaPrendas:
     
 
     def deletePrenda(self, prenda):
-
         if prenda.getEstado() == 'disponible':
+
             self._prendas.remove(prenda)
             pub.sendMessage("PRENDA_ELIMINADA", self)
         else:
             raise NameError('prenda_no_disponible')
+
 
     def getPrendas(self): 
     
