@@ -131,7 +131,7 @@ class Cliente:
         pub.sendMessage("COMPRA_ELIMINADA", self)
 
     
-    def deletePagos(self, pago):
+    def deletePago(self, pago):
 
         self._pagos.remove(pago)
         pub.sendMessage("PAGO_ELIMINADO", self)
@@ -142,7 +142,11 @@ class Cliente:
         self._condicionales.append(condicional)
         pub.sendMessage("CONDICIONAL_AGREGADO", self)
 
+    def deleteCondicional(self, condicional):
 
+        self._condicionales.remove(condicional)
+        pub.sendMessage("CONDICIONALES_ELIMINADOS")
+        
     def deleteCondicionales(self):
 
         self._condicionales = []
@@ -170,24 +174,33 @@ class Cliente:
         for compra in self._compras:
             deuda += compra.prenda.precio
 
-        for pagos in self._pagos:
+        for pago in self._pagos:
             credito += pago.monto
 
         return (credito - deuda)
 
 
     def getUltimoPago(self):
-
-        return max(self._pagos, key= lambda x:x.fecha)
-
+        if len(self._pagos) > 0:
+            return max(self._pagos, key= lambda x:x.fecha)
+        else:
+            raise NameError('no_hay_pagos')
     
     def getEstado(self):
 
         # La cantidad de dias en la cual se debe realizar un pago
         plazo = datetime.timedelta(days=30)
 
-        # Cantidad de dias desde que hizo el ultimo pago hasta hoy
-        delta = (datetime.date.today() - self.getUltimoPago().fecha).days
+
+        try:
+            # Cantidad de dias desde que hizo el ultimo pago hasta hoy
+            delta = (datetime.date.today() - self.getUltimoPago().fecha).days
+        except NameError:
+            if len(self._compras) > 0:
+                delta = (datetime.date.today() - self._compras[0].fecha).days
+            else:
+                return 'al_dia'
+        
 
         en_plazo = delta < 30
 
@@ -215,6 +228,9 @@ class Cliente:
     def getFechaNacimiento(self):
 
         return self._fecha_nacimiento
+    
+    def getDireccion(self):
+        return self._direccion
 
 
     def cumpleAniosEsteMes(self):
@@ -321,7 +337,7 @@ class ListaClientes:
     def addCliente(self, cliente):
 
         self._clientes.append(cliente)
-        pub.sendMessage("CLIENTE_AGREGADO", self)
+        pub.sendMessage("CLIENTE_AGREGADO", cliente)
 
 
     def deleteCliente(self, cliente):
@@ -367,7 +383,7 @@ class ListaClientes:
 
     def getClientePorDni(self, dni):
 
-        return filter(lambda c:c._dni==dni, self._clientes)[0]
+        return filter(lambda c:c.getDni()==dni, self._clientes)[0]
 
 
     def findClientePorNombre(self, nombre):
@@ -388,7 +404,7 @@ class ListaClientes:
                 clientes_activos.addCliente(cliente)
        
         if configuracion.mostrar_al_dia:
-            for prenda in self.getClientesAlDia():
+            for cliente in self.getClientesAlDia():
                 clientes_activos.addCliente(cliente)
 
         return clientes_activos
@@ -413,9 +429,7 @@ class ListaPrendas:
 
     def deletePrenda(self, prenda):
 
-<<<<<<< HEAD
-
-        if prenda.getEstado() = 'disponible':
+        if prenda.getEstado() == 'disponible':
             self._prendas.remove(prenda)
             pub.sendMessage("PRENDA_ELIMINADA", self)
         else:

@@ -6,7 +6,10 @@ import datetime
 from wx.lib.pubsub import Publisher as pub
 import cPickle as pickle
 
+from models import *
 from views.MainFrame import MainFrame
+from views.NuevoClienteFrame import NuevoClienteFrame
+from views.DetalleClienteFrame import DetalleClienteFrame
 
 class AppController:
     """
@@ -18,7 +21,7 @@ class AppController:
         self.app = app
         self.data = data.load()
         self.clientes = self.data["clientes"]
-        self.compras = self.data["prendas"]
+        self.prendas = self.data["prendas"]
         self.configuracion = self.data["configuracion"]
         self.carrito = models.Carrito()
 
@@ -51,10 +54,14 @@ class AppController:
         # Agregar columnas a lista_clientes
         lista_prendas.InsertColumn(0, "Codigo", width=100)
         lista_prendas.InsertColumn(1, "Nombre", width=300)
-        lista_prendas.InsertColumn(2, "Precio", width=200)
+        lista_prendas.InsertColumn(2, "Precio", width=200)  
+
+
 
 
     def agregarClienteALista(self, item, indx=-1):
+
+        lista_clientes = self.main_window.lista_clientes
 
         # Agregar items a lista_clientes
         idx = lista_clientes.GetItemCount()
@@ -87,12 +94,14 @@ class AppController:
 
     def agregarClientesActivos(self, clientes=[]):
 
+        self.main_window.lista_clientes.DeleteAllItems()
+
         if len(clientes) > 0:
             cl = clientes
         else:
             cl = self.clientes.getClientesActivos(self.configuracion)
 
-        for c in cl:
+        for c in cl.getClientes():
             self.agregarClienteALista(c)
 
 
@@ -128,7 +137,7 @@ class AppController:
 
         self.main_window.texto_buscar_clientes.Bind(wx.EVT_SET_FOCUS, self.onSetFocusBuscarClientes)
         self.main_window.texto_buscar_clientes.Bind(wx.EVT_KILL_FOCUS, self.onKillFocusBuscarClientes)
-        self.main_window.texto_buscar_prendas.Bind(wx.EVT_TEXT_ENTER, self.buscarClientes)
+        self.main_window.texto_buscar_clientes.Bind(wx.EVT_TEXT_ENTER, self.buscarClientes)
 
         #vinculacion eventos menu
 
@@ -183,25 +192,25 @@ class AppController:
 
     def mostrarDetallePrenda(self):
 
-        seleccionado = self.main_window.lista_prendas.getFocusedItem()
+        seleccionado = self.main_window.lista_prendas.GetFocusedItem()
         
         if seleccionado != -1:
-            codigo_prenda = self.main_window.lista_prendas.getItem(seleccionado,0)
+            codigo_prenda = self.main_window.lista_prendas.GetItem(seleccionado,0)
             prenda = self.prendas.getPrendaPorCodigo(int(codigo_prenda))
             controlador_detalle_prenda = DetallePrendaController(prenda, self.main_window)
 
     def eliminarPrenda(self, event):
 
-        seleccionado = self.main_window.lista_prendas.getFocusedItem()
+        seleccionado = self.main_window.lista_prendas.GetFocusedItem()
 
         if seleccionado != -1:
-            codigo_prenda = self.main_window.lista_prendas.getItem(seleccionado,0)
+            codigo_prenda = self.main_window.lista_prendas.GetItem(seleccionado,0)
             prenda = self.prendas.getPrendaPorCodigo(int(codigo_prenda))
             
             try:
                 self.prendas.deletePrenda(prenda)
             except NameError:
-                error_dialog = wx.MessageDialog(self, "No puede eliminar una prenda vendida o en condicional", "Advertencia", wx.ICON_INFORMATION)
+                error_dialog = wx.MessageDialog(self.main_window, "No puede eliminar una prenda vendida o en condicional", "Advertencia", wx.ICON_INFORMATION)
                 error_dialog.ShowModal()
                 error_dialog.Destroy()
                 self.Close()
@@ -215,25 +224,25 @@ class AppController:
 
     def agregarQuitarCarrito(self, event):
         
-        seleccionado = self.main_window.lista_prendas.getFocusedItem()
+        seleccionado = self.main_window.lista_prendas.GetFocusedItem()
 
         if seleccionado != -1:
-            codigo_prenda = self.main_window.lista_prendas.getItem(seleccionado,0)
+            codigo_prenda = self.main_window.lista_prendas.GetItem(seleccionado,0)
             prenda = self.prendas.getPrendaPorCodigo(int(codigo_prenda))
             
             try:
                 carrito.addOrDeletePrenda(prenda)
             except NameError:
-                error_dialog = wx.MessageDialog(self, "No puede vender una prenda vendida o en condicional", "Advertencia", wx.ICON_INFORMATION)
+                error_dialog = wx.MessageDialog(self.main_window, "No puede vender una prenda vendida o en condicional", "Advertencia", wx.ICON_INFORMATION)
                 error_dialog.ShowModal()
                 error_dialog.Destroy()
                 self.Close()
 
     def realizarVenta(self, event):
-        if self.carrito.getPrendas().length() != 0:
+        if len(self.carrito.getPrendas()) != 0:
             controlador_venta = Venta_Controller(self.carrito, self.main_window)
         else:
-            error_dialog = wx.MessageDialog(self, "Seleccione al menos una prenda para vender", "Advertencia", wx.ICON_INFORMATION)
+            error_dialog = wx.MessageDialog(self.main_window, "Seleccione al menos una prenda para vender", "Advertencia", wx.ICON_INFORMATION)
             error_dialog.ShowModal()
             error_dialog.Destroy()
             self.Close()
@@ -272,25 +281,27 @@ class AppController:
 
     def mostrarDetalleCliente(self, event):
 
-        seleccionado = self.main_window.lista_clientes.getFocusedItem()
+        seleccionado = self.main_window.lista_clientes.GetFocusedItem()
         
         if seleccionado != -1:
-            dni = self.main_window.lista_clientes.getItem(seleccionado,0)
+            item = self.main_window.lista_clientes.GetItem(seleccionado,0)
+            dni = item.GetText()
             cliente = self.clientes.getClientePorDni(dni)
             controlador_detalle_cliente = DetalleClienteController(cliente, self.main_window)        
 
     def eliminarCliente(self, event):
 
-        seleccionado = self.main_window.lista_clientes.getFocusedItem()
+        seleccionado = self.main_window.lista_clientes.GetFocusedItem()
         
         if seleccionado != -1:
-            dni = self.main_window.lista_clientes.getItem(seleccionado,0)
+            item = self.main_window.lista_clientes.GetItem(seleccionado,0)
+            dni = item.GetText()
             cliente = self.clientes.getClientePorDni(dni)
             self.clientes.deleteCliente(cliente)
     
     def nuevoCliente(self, event):
         #recibe self para poder agregar la prenda a la lista clientes
-        controlador_nuevo_cliente = NuevoClienteController(self, self.main_window)
+        controlador_nuevo_cliente = NuevoClienteController(self.clientes, self.main_window)
 
     def onSetFocusBuscarClientes(self, event):
         if self.main_window.texto_buscar_clientes.GetValue() == 'Buscar...':
@@ -301,6 +312,8 @@ class AppController:
             self.main_window.texto_buscar_clientes.SetValue('Buscar...')
 
     def buscarClientes(self, event):
+
+        print "ladero"
         seleccionado = self.main_window.radio_box_clientes.GetSelection()
         clientes_activos = self.clientes.getClientesActivos(self.configuracion)
         value = self.main_window.texto_buscar_clientes.GetValue()
@@ -322,13 +335,8 @@ class AppController:
 
     #metodos de suscripcion a eventos--------------------------------------------
     def clienteActualizado(self, message):
-
-        for idx in range(self.main_window.lista_clientes.GetItemCount()): 
-            item = self.main_window.lista_clientes.GetItem(idx, 0) 
-            if item.GetText() == message.data.getDni():
-                self.main_window.lista_clientes.DeleteItem(item)
-                self.agregarClienteALista(message.data, idx)
-                break
+        
+        self.agregarClientesActivos()
 
     def prendaActualizada(self, message):
     
@@ -344,12 +352,8 @@ class AppController:
         self.agregarClienteALista(message.data)
 
     def clienteEliminado(self, message):
-    
-        for idx in range(self.main_window.lista_clientes.GetItemCount()): 
-            item = self.main_window.lista_clientes.GetItem(idx, 0) 
-            if item.GetText() == message.data.getDni():
-                self.main_window.lista_clientes.DeleteItem(item)
-                break
+
+        self.agregarClientesActivos()
 
     def prendaAgregada(self, message):
         
@@ -393,7 +397,7 @@ class AppController:
         file_dialog.SetWildcard("Archivos de Backup (*.bak)|*.bak|Todos los archivos (*.*)|*.*")
         if file_dialog.ShowModal() == wx.ID_OK:
                 data.backup(file_dialog.GetPath())
-                msgbox = wx.MessageDialog(self, "Archivo de backup creado satisfactoriamente.", "INFO", style=wx.ICON_INFORMATION)
+                msgbox = wx.MessageDialog(self.main_window, "Archivo de backup creado satisfactoriamente.", "INFO", style=wx.ICON_INFORMATION)
                 msgbox.ShowModal()
 
     def restaurarBackup(self, event):
@@ -424,10 +428,10 @@ class AppController:
     def listaCorreos(self, event):
         correos = ''
 
-        for cliente in clientes.getClientes():
+        for cliente in self.clientes.getClientes():
             correos = correos + cliente.getEmail() + ';'
 
-        controlador_infome = InformeTextoController('E-mail Clientes', correos)
+        controlador_infome = InformeTextoController('E-mail Clientes', correos, self.main_window)
 
     def listaCorreosMorosos(self, event):
         correos = ''
@@ -435,7 +439,7 @@ class AppController:
         for cliente in clientes.getClientesMorosos():
             correos = correos + cliente.getEmail() + ';'
 
-        controlador_infome = InformeTextoController('E-mail Clientes Morosos', correos)
+        controlador_infome = InformeTextoController('E-mail Clientes Morosos', correos, self.main_window)
 
     def listaTelefonos(self, event):
 
@@ -459,7 +463,7 @@ class AppController:
 
             telefonos.append(tupla_datos)
 
-        controlador_infome = InformeListaController('Lista de Telefonos Morosos', columnas, telefonos)      
+        controlador_infome = InformeListaController('Lista de Telefonos Morosos', columnas, telefonos, self.main_window)      
 
     def listaCumpleaniosMes(self, event):
 
@@ -471,7 +475,7 @@ class AppController:
                 tupla_datos = (cliente.getDni(), cliente.getNombre(), cliente.getTelefono(), cliente.getEmail)
                 cumpleanieros.append(tupla_datos)
         
-        controlador_infome = InformeListaController('Lista Cumpleaños', columnas, cumpleanieros)
+        controlador_infome = InformeListaController('Lista Cumpleanos', columnas, cumpleanieros, self.main_window)
 
 
     def informeTotales(self, event):
@@ -502,12 +506,11 @@ class AppController:
         totales.append(('Total Inversion', total_inversion))
         totales.append(('Capital en Stock', total_capital_en_prendas))
 
-        controlador = InformeListaController('Informe de Totales', columnas, totales)
+        controlador = InformeListaController('Informe de Totales', columnas, totales, self.main_window)
 
         #se debe instanciar la ventana que tiene los totales
 
-#enable o algo asi
-#Controlador Detalle cliente
+
 class DetalleClienteController:
     """
     COntrolador Detalle Cliente
@@ -519,8 +522,7 @@ class DetalleClienteController:
         self.detalle_window = DetalleClienteFrame(padre, -1, "Detalle Cliente %s" %cliente.getNombre())
         self.initUi()
         self.connectEvent()
-
-        self.main_window.Show()
+        self.detalle_window.Show()
 
     def initUi(self):
 
@@ -539,16 +541,23 @@ class DetalleClienteController:
         self.agregarMovimientos()
 
         #setear datos del cliente
-        self.detalle_window.texto_dni.SetValue(self.cliente.getDni())
+        self.detalle_window.texto_dni.SetLabel(self.cliente.getDni())
         self.detalle_window.texto_nombre.SetValue(self.cliente.getNombre())
         self.detalle_window.texto_direccion.SetValue(self.cliente.getDireccion())
-        self.detalle_window.date_fecha_nacimiento.SetDate(cliente.getFechaNacimiento())
+        self.detalle_window.date_fecha_nacimiento.SetValue(self.cliente.getFechaNacimiento())
         self.detalle_window.texto_telefono.SetValue(self.cliente.getTelefono())
-        self.detalle_window.texto_email.SetValue(self.cliente.getEmail)
+        self.detalle_window.text_email.SetValue(self.cliente.getEmail())
+
+        #deshabilita inicialmente el boton guardar
+        self.disableGuardar()
 
         #setear si el cliente debe o tiene credito
         if self.cliente.getSaldo() < 0:
             self.detalle_window.label_saldo.SetValue("Credito")
+            self.detalle_window.label_saldo_imagen.SetValue(self.cliente.getSaldo()*(-1))
+        else:
+            self.detalle_window.label_saldo_imagen.SetLabel(str(self.cliente.getSaldo()))
+
 
     def connectEvent(self):
 
@@ -556,49 +565,160 @@ class DetalleClienteController:
         self.detalle_window.boton_eliminar_accion.Bind(wx.EVT_BUTTON, self.eliminarAccion)
         self.detalle_window.boton_eliminar_condicional.Bind(wx.EVT_BUTTON, self.eliminarCondicionales)
         self.detalle_window.boton_guardar.Bind(wx.EVT_BUTTON, self.guardar)
-        self.detalle_window.boton_cancelar.Bind(wx.EVT_BUTTON, self.cancelar)
-        self.detalle_window.boton_aceptar.Bind(wx.EVT_BUTTON, self.aceptar)
+        self.detalle_window.boton_cerrar.Bind(wx.EVT_BUTTON, self.cerrar)
 
-        #labels
+        #textos
         self.detalle_window.texto_paga_con.Bind(wx.EVT_TEXT_ENTER, self.calcularVuelto)
 
+        self.detalle_window.texto_nombre.Bind(wx.EVT_TEXT, self.enableGuardar)
+        self.detalle_window.texto_direccion.Bind(wx.EVT_TEXT, self.enableGuardar)
+
+        self.detalle_window.texto_telefono.Bind(wx.EVT_TEXT, self.enableGuardar)
+        self.detalle_window.text_email.Bind(wx.EVT_TEXT, self.enableGuardar)
+
+        #calendario
+        self.detalle_window.date_fecha_nacimiento.Bind(wx.EVT_DATE_CHANGED, self.enableGuardar)
+
         #suscripcion a eventos
-        self.pub.subscribe(accionEliminda, "COMPRA_ELIMINADA")
-        self.pub.suscribe(accionEliminada, "PAGO_ELIMINADO")
-        self.pub.suscribe(accionEliminada, "CONDICIONALES_ELIMINADOS")
+        pub.subscribe(self.accionEliminada, "COMPRA_ELIMINADA")
+        pub.subscribe(self.accionEliminada, "PAGO_ELIMINADO")
+        pub.subscribe(self.accionEliminada, "PAGO_AGREGADO")
+        pub.subscribe(self.accionEliminada, "CONDICIONALES_ELIMINADOS")
     
-    def agregarMovimientoALista(movimiento):
-        idx = list_resumen_cliente.GetItemCount()
+    def agregarMovimientoALista(self, movimiento):
+        idx = self.detalle_window.list_resumen_cliente.GetItemCount()
+        list_resumen_cliente = self.detalle_window.list_resumen_cliente
         
-        if isinstance(movimiento, 'Compra'):
-                list_resumen_cliente.InsertStringItem(idx, "%s" % movimiento.fecha)
-                list_resumen_cliente.SetStringItem(idx, 1, "Compra")
-                list_resumen_cliente.SetStringItem(idx, 2, "%s" % movimiento.prenda.getCodigo())
-                list_resumen_cliente.SetStringItem(idx, 3, "%s" % movimiento.prenda.getNombre())
-                list_resumen_cliente.SetStringItem(idx, 4, "%s" % movimiento.monto)                
-        elif isinstance(movimiento, 'Pago'):
+        if isinstance(movimiento, Compra):
+            list_resumen_cliente.InsertStringItem(idx, "%s" % movimiento.fecha)
+            list_resumen_cliente.SetStringItem(idx, 1, "Compra")
+            list_resumen_cliente.SetStringItem(idx, 2, "%s" % movimiento.prenda.getCodigo())
+            list_resumen_cliente.SetStringItem(idx, 3, "%s" % movimiento.prenda.getNombre())
+            list_resumen_cliente.SetStringItem(idx, 4, "%s" % movimiento.monto)                
+        elif isinstance(movimiento, Pago):
             list_resumen_cliente.InsertStringItem(idx, "%s" % movimiento.fecha)
             list_resumen_cliente.SetStringItem(idx, 1, "Pago") 
             list_resumen_cliente.SetStringItem(idx, 2, "-")
             list_resumen_cliente.SetStringItem(idx, 3, "-") 
-            list_resumen_cliente.SetStringItem(idx, 3, "%s" % movimiento.monto)
-        elif isinstance(movimiento, 'Condicional'):
+            list_resumen_cliente.SetStringItem(idx, 4, "%s" % movimiento.monto)
+        elif isinstance(movimiento, Condicional):
             list_resumen_cliente.InsertStringItem(idx, "%s" % movimiento.fecha)
             list_resumen_cliente.SetStringItem(idx, 1, "Condicional") 
             list_resumen_cliente.SetStringItem(idx, 2, "%s" % movimiento.prenda.getCodigo())
             list_resumen_cliente.SetStringItem(idx, 3, "%s" % movimiento.prenda.getNombre())
-            list_resumen_cliente.SetStringItem(idx, 3, "0")
+            list_resumen_cliente.SetStringItem(idx, 4, "0")
 
-    def agregarMovimientos():
+    def agregarMovimientos(self):
 
-        for mov in self.cliente.getMovimientos()
+        for mov in self.cliente.getMovimientos():
             self.agregarMovimientoALista(mov)
 
-    def metodo
+    def eliminarAccion(self, event):
+        #como los mov no tienen un "id" voy a eliminarlos con la posicon de la tabla
+        seleccionado = self.detalle_window.list_resumen_cliente.GetFocusedItem()
+        
+        if seleccionado != -1:
+            movimiento = cliente.getMovimientos()[seleccionado]
+            if isinstance(movimiento, 'Compra'):
+                cliente.deleteCompra(movimiento)
+            elif isinstance(movimiento, 'Pago'):
+                cliente.deletePago(movimiento)
+            elif isinstance(movimiento, 'Condicional'):
+                cliente.deleteCondicional(movimiento)
 
-#fecha, tipo:va si es condi, compra o pago...., 
-#codigo prenda: el codigo pero si es pago no iene codi, 
-#monto: si es condicional no tine monto
+    def eliminarCondicionales(self, event):
+        
+        cliente.deleteCondicionales()
+
+    def guardar(self, event):
+
+        self.cliente.setNombre(self.detalle_window.texto_nombre.GetValue())
+        self.cliente.setTelefono(self.detalle_window.texto_telefono.GetValue())
+        self.cliente.setEmail(self.detalle_window.text_email.GetValue())
+        self.cliente.setFechaNacimiento(self.detalle_window.date_fecha_nacimiento.GetValue())
+        self.cliente.setDireccion(self.detalle_window.texto_direccion.GetValue())
+
+        #una vez guardado deshabilitamos el boton guardar
+        self.disableGuardar()
+
+    def cerrar(self, event):
+        self.detalle_window.Destroy()
+        #hay que destruir el objeto o la ventana
+
+    def calcularVuelto(self, event):
+
+        entrega = float(self.detalle_window.texto_entrega.GetValue())
+        paga_con = float(self.detalle_window.texto_paga_con.GetValue())
+        
+        if entrega <= paga_con:
+            self.detalle_window.label_vuelto_imagen.SetLabel(str(paga_con - entrega))
+            new_pago = Pago(entrega, self.cliente)
+            self.cliente.addPago(new_pago)
+            self.detalle_window.label_saldo_imagen.SetLabel(str(self.cliente.getSaldo()))
+        else:
+            error_dialog = wx.MessageDialog(self.detalle_window, "No puede pagar con menos de lo que entrega", "Advertencia", wx.ICON_INFORMATION)
+            error_dialog.ShowModal()
+            error_dialog.Destroy()
+            self.Close()
+
+    def accionEliminada(self, message):
+        #recargamos movimientos del cliente
+        self.agregarMovimientos()
+
+    def enableGuardar(self, event):
+        self.detalle_window.boton_guardar.Enable(True)
+
+    def disableGuardar(self):
+        self.detalle_window.boton_guardar.Enable(False)
+
+class NuevoClienteController():
+
+
+    def __init__(self, clientes, padre):
+
+        self.clientes = clientes
+        self.nuevo_window = NuevoClienteFrame(padre, -1, "Nuevo Cliente")
+
+        self.disableGuardar()
+        self.connectEvent()
+
+        self.nuevo_window.Show()
+
+
+    def connectEvent(self):
+        
+        self.nuevo_window.boton_guardar.Bind(wx.EVT_BUTTON, self.guardar)
+        self.nuevo_window.boton_cancelar.Bind(wx.EVT_BUTTON, self.cancelar)
+
+        self.nuevo_window.texto_dni.Bind(wx.EVT_TEXT, self.enableGuardar)
+
+    def guardar(self, event):
+        dni = self.nuevo_window.texto_dni.GetValue()
+        nombre = self.nuevo_window.texto_nombre.GetValue()
+        telefono = self.nuevo_window.texto_telefono.GetValue()
+        email = self.nuevo_window.text_email.GetValue()
+        fecha_nacimiento = self.nuevo_window.date_fecha_nacimiento.GetValue()
+        direccion = self.nuevo_window.texto_direccion.GetValue()
+        
+        new_cliente = Cliente(dni, nombre, telefono, email, direccion, fecha_nacimiento)
+
+        self.clientes.addCliente(new_cliente)
+
+        #hay que cerrar la ventana o destruir el objeto
+
+    def cancelar(self, event):
+        #hay que cerrar la ventana o destruir el objeto
+        pass
+    
+
+    def enableGuardar(self, event):
+        if (self.nuevo_window.texto_dni.GetValue() != ''):
+            self.nuevo_window.boton_guardar.Enable(True)
+        else:
+            self.disableGuardar()
+
+    def disableGuardar(self):
+        self.nuevo_window.boton_guardar.Enable(False)
 
 
 

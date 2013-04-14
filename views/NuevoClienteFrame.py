@@ -26,9 +26,9 @@ class NuevoClienteFrame(wx.Frame):
         self.label_telefono = wx.StaticText(self.panel_1, -1, "Telefono")
         self.texto_telefono = wx.TextCtrl(self.panel_1, -1, "")
         self.label_email = wx.StaticText(self.panel_1, -1, "e-mail")
-        self.text_emial = wx.TextCtrl(self.panel_1, -1, "")
+        self.text_email = wx.TextCtrl(self.panel_1, -1, "")
         self.boton_cancelar = wx.Button(self.panel_1, -1, "Cancelar")
-        self.boton_aceptar = wx.Button(self.panel_1, -1, "Aceptar")
+        self.boton_guardar = wx.Button(self.panel_1, -1, "Guardar")
 
         self.__set_properties()
         self.__do_layout()
@@ -58,8 +58,8 @@ class NuevoClienteFrame(wx.Frame):
         self.texto_telefono.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
         self.label_email.SetMinSize((62, 19))
         self.label_email.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.text_emial.SetMinSize((333, 25))
-        self.text_emial.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2"))
+        self.text_email.SetMinSize((333, 25))
+        self.text_email.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "MS Shell Dlg 2"))
         # end wxGlade
 
     def __do_layout(self):
@@ -92,10 +92,10 @@ class NuevoClienteFrame(wx.Frame):
         grid_sizer_3_copy_copy.AddGrowableCol(1)
         sizer_4.Add(grid_sizer_3_copy_copy, 1, wx.EXPAND, 0)
         grid_sizer_5.Add(self.label_email, 0, wx.LEFT | wx.TOP, 10)
-        grid_sizer_5.Add(self.text_emial, 0, wx.LEFT | wx.RIGHT | wx.TOP | wx.EXPAND, 8)
+        grid_sizer_5.Add(self.text_email, 0, wx.LEFT | wx.RIGHT | wx.TOP | wx.EXPAND, 8)
         sizer_4.Add(grid_sizer_5, 1, wx.EXPAND, 0)
         grid_sizer_7.Add(self.boton_cancelar, 0, wx.ALL | wx.ALIGN_RIGHT, 4)
-        grid_sizer_7.Add(self.boton_aceptar, 0, wx.ALL, 4)
+        grid_sizer_7.Add(self.boton_guardar, 0, wx.ALL, 4)
         grid_sizer_7.AddGrowableCol(0)
         sizer_4.Add(grid_sizer_7, 1, wx.EXPAND, 0)
         self.panel_1.SetSizer(sizer_4)
