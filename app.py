@@ -12,6 +12,7 @@ from views.NuevoClienteFrame import NuevoClienteFrame
 from views.DetalleClienteFrame import DetalleClienteFrame
 from views.InformeTextoFrame import InformeTextoFrame
 from views.InformeListaFrame import InformeListaFrame
+from views.PrendaFrame import PrendaFrame
 
 class AppController:
     """
@@ -52,6 +53,13 @@ class AppController:
         lista_prendas.InsertColumn(1, "Nombre", width=300)
         lista_prendas.InsertColumn(2, "Precio", width=200)  
 
+        #setear menus con la configuracion
+        self.main_window.ver_disponibles.Check(self.configuracion.mostrar_disponibles)
+        self.main_window.ver_condicionales.Check(self.configuracion.mostrar_condicionales)
+        self.main_window.ver_vendidas.Check(self.configuracion.mostrar_vendidas)
+        self.main_window.ver_al_dia.Check(self.configuracion.mostrar_al_dia)
+        self.main_window.ver_tardios.Check(self.configuracion.mostrar_tardios)
+        self.main_window.ver_morosos.Check(self.configuracion.mostrar_morosos)
 
 
 
@@ -76,7 +84,7 @@ class AppController:
     def agregarPrendaALista(self, item, indx=-1):
         
         # Agregar items a lista_prendas
-        idx = lista_prendas.GetItemCount()
+        idx = self.main_window.lista_prendas.GetItemCount()
         lista_prendas.InsertStringItem(idx, "%s" % item.getCodigo()) 
         lista_prendas.SetStringItem(idx, 1, "%s" % item.getNombre()) 
         lista_prendas.SetStringItem(idx, 2, "%s" % item.getPrecio()) 
@@ -92,7 +100,7 @@ class AppController:
 
         self.main_window.lista_clientes.DeleteAllItems()
 
-        if len(clientes) > 0:
+        if len(clientes.getClientes()) > 0:
             cl = clientes
         else:
             cl = self.clientes.getClientesActivos(self.configuracion)
@@ -138,7 +146,7 @@ class AppController:
 
         self.main_window.Bind(wx.EVT_MENU, self.realizarBackup, self.main_window.realizar_backup)
         self.main_window.Bind(wx.EVT_MENU, self.restaurarBackup, self.main_window.restaurar_backup)
-        self.main_window.Bind(wx.EVT_MENU, self.verDisponibles), self.main_window.ver_disponibles 
+        self.main_window.Bind(wx.EVT_MENU, self.verDisponibles, self.main_window.ver_disponibles) 
         self.main_window.Bind(wx.EVT_MENU, self.verCondicionales, self.main_window.ver_condicionales)
         self.main_window.Bind(wx.EVT_MENU, self.verVendidas, self.main_window.ver_vendidas)
         self.main_window.Bind(wx.EVT_MENU, self.verAlDia, self.main_window.ver_al_dia)
@@ -217,14 +225,15 @@ class AppController:
     def nuevaPrenda(self, event):
 
         #recibe self para poder agregar la prenda a la lista prendas. Self.main_window es la ventana padre
-        controlador_nueva_prenda = NuevaPrendaController(self, self.main_window)
+        controlador_nueva_prenda = NuevaPrendaController(self.prendas, self.main_window)
 
     def agregarQuitarCarrito(self, event):
         
         seleccionado = self.main_window.lista_prendas.GetFocusedItem()
 
         if seleccionado != -1:
-            codigo_prenda = self.main_window.lista_prendas.GetItem(seleccionado,0)
+            item = self.main_window.lista_prendas.GetItem(seleccionado,0)
+            codigo_prenda = item.GetText()
             prenda = self.prendas.getPrendaPorCodigo(int(codigo_prenda))
             
             try:
@@ -310,7 +319,6 @@ class AppController:
 
     def buscarClientes(self, event):
 
-        print "ladero"
         seleccionado = self.main_window.radio_box_clientes.GetSelection()
         clientes_activos = self.clientes.getClientesActivos(self.configuracion)
         value = self.main_window.texto_buscar_clientes.GetValue()
@@ -372,12 +380,17 @@ class AppController:
         self.agregarClientesActivos()
 
     def prendaAgregadaCarrito(self, message):
-        #este metodo debe cambiar el color de la prenda agregada
-        pass
+        
+        seleccionado = self.main_window.lista_prendas.GetFocusedItem()
+
+        if seleccionado != -1:
+            self.main_window.lista_prendas.SetItemBackgroundColor(seleccionado, "green")    
 
     def prendaEliminadaCarrito(self, message):
-        #este metodo debe cambiar el color de la prenda eliminada
-        pass
+        seleccionado = self.main_window.lista_prendas.GetFocusedItem()
+
+        if seleccionado != -1:
+            self.main_window.lista_prendas.SetItemBackgroundColor(seleccionado, "white")
 
     def carritoVaciado(self, message):
         self.agregarPrendasActivas()
@@ -387,7 +400,7 @@ class AppController:
     def realizarBackup(self, event):
         
         # Abrir dialogo para seleccionar ruta de destino del archivo de backup
-        file_dialog = wx.FileDialog(self, style = wx.SAVE)
+        file_dialog = wx.FileDialog(self.main_window, style = wx.SAVE)
         d = datetime.date.today()
         filename = "%s-%s-%s-backup.bak" % (d.day, d.month, d.year)
         file_dialog.SetFilename(filename)
@@ -402,22 +415,22 @@ class AppController:
         pass
     
     def verDisponibles(self, event):
-        self.configuracion.setMostrarDisponibes(self.ver_disponibles.IsChecked())        
+        self.configuracion.setMostrarDisponibles(self.main_window.ver_disponibles.IsChecked())        
 
     def verCondicionales(self, event):
-        self.configuracion.setMostrarCondicionales(self.ver_condicionales.IsChecked())
+        self.configuracion.setMostrarCondicionales(self.main_window.ver_condicionales.IsChecked())
 
     def verVendidas(self, event):
-        self.configuracion.setMostrarVendidas(self.ver_vendidas.IsChecked())
+        self.configuracion.setMostrarVendidas(self.main_window.ver_vendidas.IsChecked())
 
     def verAlDia(self, event):
-        self.configuracion.setMostrarAlDia(self.ver_al_dia.IsChecked())
+        self.configuracion.setMostrarAlDia(self.main_window.ver_al_dia.IsChecked())
 
     def verTardios(self, event):
-        self.configuracion.setMostrarTardios(self.ver_tardios.IsChecked())
+        self.configuracion.setMostrarTardios(self.main_window.ver_tardios.IsChecked())
 
     def verMorosos(self, event):
-        self.configuracion.setMostrarMorosos(self.ver_morosos.IsChecked())    
+        self.configuracion.setMostrarMorosos(self.main_window.ver_morosos.IsChecked())    
     
     def vaciarCarrito(self, event):
         self.carrito.vaciarCarrito()
@@ -517,6 +530,7 @@ class DetalleClienteController:
 
         self.cliente = cliente
         self.detalle_window = DetalleClienteFrame(padre, -1, "Detalle Cliente %s" %cliente.getNombre())
+        self.detalle_window.Centre()
         self.initUi()
         self.connectEvent()
         self.detalle_window.Show()
@@ -675,6 +689,7 @@ class NuevoClienteController():
 
         self.clientes = clientes
         self.nuevo_window = NuevoClienteFrame(padre, -1, "Nuevo Cliente")
+        self.nuevo_window.Centre()
 
         self.disableGuardar()
         self.connectEvent()
@@ -698,8 +713,14 @@ class NuevoClienteController():
         direccion = self.nuevo_window.texto_direccion.GetValue()
         
         new_cliente = Cliente(dni, nombre, telefono, email, direccion, fecha_nacimiento)
+        try:
+            self.clientes.addCliente(new_cliente)
+        except NameError:
+            error_dialog = wx.MessageDialog(self.nuevo_window, "Ya existe un cliente con ese DNI", "Advertencia", wx.ICON_INFORMATION)
+            error_dialog.ShowModal()
+            error_dialog.Destroy()
+            self.Close()
 
-        self.clientes.addCliente(new_cliente)
 
         #hay que cerrar la ventana o destruir el objeto
 
@@ -709,7 +730,7 @@ class NuevoClienteController():
     
 
     def enableGuardar(self, event):
-        if (self.nuevo_window.texto_dni.GetValue() != ''):
+        if (len(self.nuevo_window.texto_dni.GetValue()) == 8):
             self.nuevo_window.boton_guardar.Enable(True)
         else:
             self.disableGuardar()
@@ -772,7 +793,144 @@ class InformeListaController:
                 else:
                     list_titulo.SetStringItem(idx, cont, "%s" % elem)
                 cont = cont + 1
-                
+
+
+class NuevaPrendaController:
+    """
+    Controlador de nueva prenda
+    """
+
+    def __init__(self, prendas, padre):
+
+        self.prendas = prendas
+        self.nueva_window = PrendaFrame(padre, -1, "Nueva Prenda")
+        self.nueva_window.Centre()
+
+        self.disableGuardar()
+        self.connectEvent()
+
+        self.nueva_window.Show()
+
+    def connectEvent(self):
+        
+        self.nueva_window.boton_guardar.Bind(wx.EVT_BUTTON, self.guardar)
+        self.nueva_window.boton_cancelar.Bind(wx.EVT_BUTTON, self.cancelar)
+
+        self.nueva_window.texto_nombre.Bind(wx.EVT_TEXT, self.enableGuardar)
+        self.nueva_window.texto_costo.Bind(wx.EVT_TEXT, self.enableGuardar)
+        self.nueva_window.texto_precio.Bind(wx.EVT_TEXT, self.enableGuardar)
+
+    def guardar(self, event):
+
+        nombre = self.nueva_window.texto_nombre.GetValue()
+        talle = self.nueva_window.texto_talle.GetValue()
+        costo = float(self.nueva_window.texto_costo.GetValue())
+        precio = float(self.nueva_window.texto_precio.GetValue())
+        descripcion = self.nueva_window.text_descripcion.GetValue()
+
+        new_prenda = Prenda(nombre, talle, costo, precio, descripcion)
+
+        self.prendas.addPrenda(new_prenda)
+
+        vendida = self.nueva_window.combo_box_vendida.GetValue()
+
+        if vendida == "Si":
+            new_prenda.setCliente(cliente_casual)
+            new_compra = Compra(new_prenda.getPrecio(), new_prenda, cliente_casual)
+            cliente_casual.addCompra(new_compra)
+
+        msgbox = wx.MessageDialog(self.nueva_window, "El codigo de la nueva prenda es %s" %new_prenda.getCodigo(), "Informacion", style=wx.ICON_INFORMATION)
+        msgbox.ShowModal()
+
+    def cancelar(self, event):
+        pass
+
+
+    def enableGuardar(self, event):
+        if ((self.nueva_window.texto_nombre.GetValue()) != "") and ((self.nueva_window.texto_costo.GetValue()) != "") and ((self.nueva_window.texto_precio.GetValue()) != ""):
+            self.nueva_window.boton_guardar.Enable(True)
+        else:
+            self.disableGuardar()
+
+    def disableGuardar(self):
+        self.nueva_window.boton_guardar.Enable(False)       
+
+
+class DetallePrendaController:
+    """
+    Controlador detalle prenda
+    """
+
+    def __init__(self, prenda, padre):
+
+        self.prenda = prendas
+        self.detalle_window = PrendaFrame(padre, -1, "Detalle Prenda %s" %prenda.getCodigo())
+        self.detalle_window.Centre()
+        self.initUi()
+
+        self.disableGuardar()
+        self.connectEvent()
+
+        self.detalle_window.Show()
+
+    def initui(self):
+        self.detalle_window.texto_nombre.SetValue(self.prenda.getNombre())
+        self.detalle_window.texto_talle.SetValue(self.prenda.getTalle())
+        self.detalle_window.texto_costo.SetValue(self.prenda.getCosto())
+        self.detalle_window.texto_precio.SetValue(self.prenda.getPrecio())
+        self.detalle_window.text_descripcion.SetValue(self.prenda.getDescripcion())
+
+        if self.prenda.getEstado == 'vendida':
+            self.detalle_window.combo_box_vendida.SetValue('Si')
+
+    def connectEvent(self):
+        
+        self.detalle_window.boton_guardar.Bind(wx.EVT_BUTTON, self.guardar)
+        self.detalle_window.boton_cancelar.Bind(wx.EVT_BUTTON, self.cancelar)
+
+        self.detalle_window.texto_nombre.Bind(wx.EVT_TEXT, self.enableGuardar)
+        self.detalle_window.texto_costo.Bind(wx.EVT_TEXT, self.enableGuardar)
+        self.detalle_window.texto_precio.Bind(wx.EVT_TEXT, self.enableGuardar)
+        self.detalle_window.texto_talle.Bind(wx.EVT_TEXT, self.enableGuardar)
+        self.detalle_window.text_descripcion.Bind(wx.EVT_TEXT, self.enableGuardar)
+        self.detalle_window.combo_box_vendida.Bind(wx.EVT.COMBOBOX, self.enableGuardar)
+
+
+    def guardar(self, event):
+
+        self.prenda.setNombre(self.detalle_window.texto_nombre.GetValue())
+        self.prenda.setTalle(self.detalle_window.texto_talle.GetValue())
+        self.prenda.setCosto(float(self.detalle_window.texto_costo.GetValue()))
+        self.prenda.setPrecio(float(self.detalle_window.texto_precio.GetValue()))
+        self.prenda.setDescripcion(self.detalle_window.text_descripcion.GetValue())
+
+        vendida = self.detalle_window.combo_box_vendida.GetValue()
+
+        if vendida == "Si" and self.prenda.getEstado() == "disponble":
+            new_prenda.setCliente(cliente_casual)
+            new_compra = Compra(new_prenda.getPrecio(), new_prenda, cliente_casual)
+            cliente_casual.addCompra(new_compra)
+        elif vendida == "Si" and self.prenda.getEstado() == "condicional":
+                error_dialog = wx.MessageDialog(self.detalle_window, "Esta prenda esta en condicional, no puede marcarla como vendida", "Advertencia", wx.ICON_INFORMATION)
+                error_dialog.ShowModal()
+        elif vendida == "No" and self.prenda.getEstado() == "vendida"
+            cliente = self.prenda.getCliente()
+            compra = cliente.getCompraPorPrenda(self.prenda)
+            cliente.deleteCompra(compra)
+            self.prenda.setCliente(None)
+
+    def cancelar(self, event):
+        pass
+
+
+    def enableGuardar(self, event):
+        if ((self.detalle_window.texto_nombre.GetValue()) != "") and ((self.detalle_window.texto_costo.GetValue()) != "") and ((self.detalle_window.texto_precio.GetValue()) != ""):
+            self.detalle_window.boton_guardar.Enable(True)
+        else:
+            self.disableGuardar()
+
+    def disableGuardar(self):
+        self.detalle_window.boton_guardar.Enable(False)            
 
 
 if __name__=='__main__':

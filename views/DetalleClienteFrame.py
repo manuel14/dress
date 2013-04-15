@@ -12,7 +12,7 @@ import wx
 class DetalleClienteFrame(wx.Frame):
     def __init__(self, *args, **kwds):
         # begin wxGlade: DetalleClienteFrame.__init__
-        kwds["style"] = wx.DEFAULT_FRAME_STYLE
+        kwds["style"] = wx.DEFAULT_FRAME_STYLE ^ wx.RESIZE_BORDER
         wx.Frame.__init__(self, *args, **kwds)
         self.panel_1 = wx.Panel(self, -1)
         self.label_cliente = wx.StaticText(self.panel_1, -1, "CLIENTE")

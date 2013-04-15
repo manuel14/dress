@@ -242,6 +242,13 @@ class Cliente:
         else: 
             return False
 
+    def getCompraPorPrenda(self, prenda):
+        
+        for compra in self._compras:
+            if prenda = compra.prenda:
+                return compra
+                break
+
 class Prenda:
     """
     Representa una prenda de ropa. El producto del negocio.
@@ -249,7 +256,7 @@ class Prenda:
 
     _index = 0 # Lleva la cuenta de los codigos de las prendas
 
-    def __init__(self, nombre, talle, costo, precio):
+    def __init__(self, nombre, talle, costo, precio, descripcion):
 
         self._codigo = Prenda._index #el codigo se autoasigna con el valor de _index
         Prenda._index += 1
@@ -324,7 +331,9 @@ class Prenda:
 
         return self._codigo
 
+    def getCliente(self):
 
+        return self._cliente
 
 class ListaClientes:
     """
@@ -337,9 +346,18 @@ class ListaClientes:
 
 
     def addCliente(self, cliente):
+        flag = False
+        #buscamos que no exista un cliente con ese dni
+        for clientebus in self._clientes:
+            if clientebus.getDni() == cliente.getDni():
+                flag = True
+                break
 
-        self._clientes.append(cliente)
-        pub.sendMessage("CLIENTE_AGREGADO", cliente)
+        if flag:
+            raise NameError('prenda_no_disponible')
+        else:
+            self._clientes.append(cliente)
+            pub.sendMessage("CLIENTE_AGREGADO", cliente)
 
 
     def deleteCliente(self, cliente):
@@ -533,29 +551,29 @@ class Configuracion:
         self.mostrar_condicionales = True
         self.mostrar_disponibles = True
 
-        def setMostrarMorosos(estado):
-            self.mostrar_morosos = estado
-            pub.sendMessage("CONFIGURACION_CLIENTES_CAMBIO", self)
+    def setMostrarMorosos(self, estado):
+        self.mostrar_morosos = estado
+        pub.sendMessage("CONFIGURACION_CLIENTES_CAMBIO", self)
 
-        def setMostrarTardios(estado):
-            self.mostrar_tardios = estado
-            pub.sendMessage("CONFIGURACION_CLIENTES_CAMBIO", self)
+    def setMostrarTardios(self, estado):
+        self.mostrar_tardios = estado
+        pub.sendMessage("CONFIGURACION_CLIENTES_CAMBIO", self)
 
-        def setMostrarAlDia(estado):
-            self.mostrar_al_dia = estado
-            pub.sendMessage("CONFIGURACION_CLIENTES_CAMBIO", self)
+    def setMostrarAlDia(self, estado):
+        self.mostrar_al_dia = estado
+        pub.sendMessage("CONFIGURACION_CLIENTES_CAMBIO", self)
 
-        def setMostrarVendidas(estado):
-            self.mostrar_vendidas = estado
-            pub.sendMessage("CONFIGURACION_PRENDAS_CAMBIO", self)
+    def setMostrarVendidas(self, estado):
+        self.mostrar_vendidas = estado
+        pub.sendMessage("CONFIGURACION_PRENDAS_CAMBIO", self)
        
-        def setMostrarCondicionales(estado):
-            self.mostrar_condicionales = estado
-            pub.sendMessage("CONFIGURACION_PRENDAS_CAMBIO", self)
+    def setMostrarCondicionales(self, estado):
+        self.mostrar_condicionales = estado
+        pub.sendMessage("CONFIGURACION_PRENDAS_CAMBIO", self)
 
-        def setMostrarDisponibles(estado):
-            self.mostrar_disponibles = estado
-            pub.sendMessage("CONFIGURACION_PRENDAS_CAMBIO",self)
+    def setMostrarDisponibles(self, estado):
+        self.mostrar_disponibles = estado
+        pub.sendMessage("CONFIGURACION_PRENDAS_CAMBIO",self)
 
 
 
