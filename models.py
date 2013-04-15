@@ -73,12 +73,13 @@ class Cliente:
     Representa a un Cliente, y contiene su informacion.
     """
 
-    def __init__(self, dni, nombre, telefono, email, fecha_nacimiento):
+    def __init__(self, dni, nombre, telefono, email, direccion, fecha_nacimiento):
 
         self._dni = dni
         self._nombre = nombre
         self._telefono = telefono
         self._email = email
+        self._direccion = direccion
         self._fecha_nacimiento = fecha_nacimiento
 
         self._compras = []
@@ -103,8 +104,12 @@ class Cliente:
         self._email = email
         pub.sendMessage("CAMBIO_CLIENTE", self)
 
-    def setFechaNacimiento(fecha):
+    def setFechaNacimiento(self, fecha):
         self._fecha_nacimiento = fecha
+        pub.sendMessage("CAMBIO_CLIENTE", self)
+
+    def setDireccion(self, direccion):
+        self._direccion = direccion
         pub.sendMessage("CAMBIO_CLIENTE", self)
 
    
@@ -126,7 +131,7 @@ class Cliente:
         pub.sendMessage("COMPRA_ELIMINADA", self)
 
     
-    def deletePagos(self, pago):
+    def deletePago(self, pago):
 
         self._pagos.remove(pago)
         pub.sendMessage("PAGO_ELIMINADO", self)
@@ -137,7 +142,11 @@ class Cliente:
         self._condicionales.append(condicional)
         pub.sendMessage("CONDICIONAL_AGREGADO", self)
 
+    def deleteCondicional(self, condicional):
 
+        self._condicionales.remove(condicional)
+        pub.sendMessage("CONDICIONALES_ELIMINADOS")
+        
     def deleteCondicionales(self):
 
         self._condicionales = []
@@ -165,24 +174,33 @@ class Cliente:
         for compra in self._compras:
             deuda += compra.prenda.precio
 
-        for pagos in self._pagos:
+        for pago in self._pagos:
             credito += pago.monto
 
         return (credito - deuda)
 
 
     def getUltimoPago(self):
-
-        return max(self._pagos, key= lambda x:x.fecha)
-
+        if len(self._pagos) > 0:
+            return max(self._pagos, key= lambda x:x.fecha)
+        else:
+            raise NameError('no_hay_pagos')
     
     def getEstado(self):
 
         # La cantidad de dias en la cual se debe realizar un pago
         plazo = datetime.timedelta(days=30)
 
-        # Cantidad de dias desde que hizo el ultimo pago hasta hoy
-        delta = (datetime.date.today() - self.getUltimoPago().fecha).days
+
+        try:
+            # Cantidad de dias desde que hizo el ultimo pago hasta hoy
+            delta = (datetime.date.today() - self.getUltimoPago().fecha).days
+        except NameError:
+            if len(self._compras) > 0:
+                delta = (datetime.date.today() - self._compras[0].fecha).days
+            else:
+                return 'al_dia'
+        
 
         en_plazo = delta < 30
 
@@ -207,12 +225,29 @@ class Cliente:
 
         return self._email
 
-    def cumpleAniosEsteMes(self):
+    def getFechaNacimiento(self):
 
-        if (self._fecha_nacimiento.month == datetime.date.today().month):
+        return self._fecha_nacimiento
+    
+    def getDireccion(self):
+        return self._direccion
+
+
+    def cumpleAniosEsteMes(self):
+        nacim = self._fecha_nacimiento.GetMonth() +1
+        actual = datetime.date.today().month
+
+        if nacim == actual:
             return True
         else: 
             return False
+
+    def getCompraPorPrenda(self, prenda):
+        
+        for compra in self._compras:
+            if prenda = compra.prenda:
+                return compra
+                break
 
 class Prenda:
     """
@@ -221,7 +256,7 @@ class Prenda:
 
     _index = 0 # Lleva la cuenta de los codigos de las prendas
 
-    def __init__(self, nombre, talle, costo, precio):
+    def __init__(self, nombre, talle, costo, precio, descripcion):
 
         self._codigo = Prenda._index #el codigo se autoasigna con el valor de _index
         Prenda._index += 1
@@ -296,7 +331,9 @@ class Prenda:
 
         return self._codigo
 
+    def getCliente(self):
 
+        return self._cliente
 
 class ListaClientes:
     """
@@ -309,9 +346,18 @@ class ListaClientes:
 
 
     def addCliente(self, cliente):
+        flag = False
+        #buscamos que no exista un cliente con ese dni
+        for clientebus in self._clientes:
+            if clientebus.getDni() == cliente.getDni():
+                flag = True
+                break
 
-        self._clientes.append(cliente)
-        pub.sendMessage("CLIENTE_AGREGADO", self)
+        if flag:
+            raise NameError('prenda_no_disponible')
+        else:
+            self._clientes.append(cliente)
+            pub.sendMessage("CLIENTE_AGREGADO", cliente)
 
 
     def deleteCliente(self, cliente):
@@ -357,7 +403,7 @@ class ListaClientes:
 
     def getClientePorDni(self, dni):
 
-        return filter(lambda c:c._dni==dni, self._clientes)[0]
+        return filter(lambda c:c.getDni()==dni, self._clientes)[0]
 
 
     def findClientePorNombre(self, nombre):
@@ -378,7 +424,7 @@ class ListaClientes:
                 clientes_activos.addCliente(cliente)
        
         if configuracion.mostrar_al_dia:
-            for prenda in self.getClientesAlDia():
+            for cliente in self.getClientesAlDia():
                 clientes_activos.addCliente(cliente)
 
         return clientes_activos
@@ -402,12 +448,13 @@ class ListaPrendas:
     
 
     def deletePrenda(self, prenda):
-
         if prenda.getEstado() == 'disponible':
+
             self._prendas.remove(prenda)
             pub.sendMessage("PRENDA_ELIMINADA", self)
         else:
             raise NameError('prenda_no_disponible')
+
 
     def getPrendas(self): 
     
@@ -504,29 +551,29 @@ class Configuracion:
         self.mostrar_condicionales = True
         self.mostrar_disponibles = True
 
-        def setMostrarMorosos(estado):
-            self.mostrar_morosos = estado
-            pub.sendMessage("CONFIGURACION_CLIENTES_CAMBIO", self)
+    def setMostrarMorosos(self, estado):
+        self.mostrar_morosos = estado
+        pub.sendMessage("CONFIGURACION_CLIENTES_CAMBIO", self)
 
-        def setMostrarTardios(estado):
-            self.mostrar_tardios = estado
-            pub.sendMessage("CONFIGURACION_CLIENTES_CAMBIO", self)
+    def setMostrarTardios(self, estado):
+        self.mostrar_tardios = estado
+        pub.sendMessage("CONFIGURACION_CLIENTES_CAMBIO", self)
 
-        def setMostrarAlDia(estado):
-            self.mostrar_al_dia = estado
-            pub.sendMessage("CONFIGURACION_CLIENTES_CAMBIO", self)
+    def setMostrarAlDia(self, estado):
+        self.mostrar_al_dia = estado
+        pub.sendMessage("CONFIGURACION_CLIENTES_CAMBIO", self)
 
-        def setMostrarVendidas(estado):
-            self.mostrar_vendidas = estado
-            pub.sendMessage("CONFIGURACION_PRENDAS_CAMBIO", self)
+    def setMostrarVendidas(self, estado):
+        self.mostrar_vendidas = estado
+        pub.sendMessage("CONFIGURACION_PRENDAS_CAMBIO", self)
        
-        def setMostrarCondicionales(estado):
-            self.mostrar_condicionales = estado
-            pub.sendMessage("CONFIGURACION_PRENDAS_CAMBIO", self)
+    def setMostrarCondicionales(self, estado):
+        self.mostrar_condicionales = estado
+        pub.sendMessage("CONFIGURACION_PRENDAS_CAMBIO", self)
 
-        def setMostrarDisponibles(estado):
-            self.mostrar_disponibles = estado
-            pub.sendMessage("CONFIGURACION_PRENDAS_CAMBIO",self)
+    def setMostrarDisponibles(self, estado):
+        self.mostrar_disponibles = estado
+        pub.sendMessage("CONFIGURACION_PRENDAS_CAMBIO",self)
 
 
 
@@ -536,4 +583,4 @@ class Configuracion:
 
 #Creacion del cliente casual, al que se le asignan ventas casuales.
 
-cliente_casual = Cliente("0", 'cliente_casual', '', '', '')
+cliente_casual = Cliente("0", 'cliente_casual', '', '', '', '')
