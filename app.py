@@ -138,7 +138,7 @@ class AppController:
         self.main_window.Bind(wx.EVT_MENU, self.restaurarBackup, self.main_window.restaurar_backup)
         self.main_window.Bind(wx.EVT_MENU, self.verDisponibles), self.main_window.ver_disponibles 
         self.main_window.Bind(wx.EVT_MENU, self.verCondicionales, self.main_window.ver_condicionales)
-        self.main_window.Bind(wx.EVT_MENU, self.verVendidas, self.MainFrame_window.ver_vendidas)
+        self.main_window.Bind(wx.EVT_MENU, self.verVendidas, self.main_window.ver_vendidas)
         self.main_window.Bind(wx.EVT_MENU, self.verAlDia, self.main_window.ver_al_dia)
         self.main_window.Bind(wx.EVT_MENU, self.verTardios, self.main_window.ver_tardios)
         self.main_window.Bind(wx.EVT_MENU, self.verMorosos, self.main_window.ver_morosos)
